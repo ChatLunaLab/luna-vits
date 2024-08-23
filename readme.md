@@ -2,7 +2,7 @@
 
 # koishi-plugin-luna-vits
 
-_多平台 vits 聚合插件，目前支持 `vits-sample-api`, `GPT-SoVITS-2`, `bert-vits2`_
+_多平台 vits 聚合插件，目前支持 `GPT-SoVITS-2`, 其他支持仍在更新...._
 
 ## [![npm](https://img.shields.io/npm/v/koishi-plugin-luna-vits)](https://www.npmjs.com/package/koishi-plugin-luna-vits) [![npm](https://img.shields.io/npm/dm/koishi-plugin-luna-vits)](https://www.npmjs.com/package/koishi-plugin-luna-vits) ![node version](https://img.shields.io/badge/node-%3E=18-green) ![github top language](https://img.shields.io/github/languages/top/ChatLunaLab/chatluna-character?logo=github)
 
@@ -21,3 +21,7 @@ _多平台 vits 聚合插件，目前支持 `vits-sample-api`, `GPT-SoVITS-2`, `
 ## 使用
 
 待续
+
+## 感谢
+
+感谢 [better-dxl-bert-vits](https://github.com/TR0MXI/koishi-plugin-better-dxl-bert-vits) 为本项目带来的启发。

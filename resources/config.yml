@@ -1,0 +1,19 @@
+- name: 'GPT-SoVITS_2'
+  type: 'GPT-SoVITS2'
+  url: 'http://127.0.0.1:9880'
+  config:
+      # 下面的路径为你在服务器上实际的音频路径
+      ref_audio_path: ''
+      aux_ref_audio_paths:
+          - ''
+          - '222'
+      prompt_text: '你好'
+      prompt_lang: 'zh'
+
+  speakers:
+      - name: '丛雨'
+        # 是否为 api 启动后使用的默认权重模型，设置为 true 后将不自动切换
+        is_default: true
+      - name: '张三'
+        gpt_weights: ''
+        sovits_weights: ''

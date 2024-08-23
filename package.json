@@ -37,7 +37,9 @@
         "url": "https://github.com/ChatLunaLab/luna-vits/issues"
     },
     "homepage": "https://github.com/ChatLunaLab/luna-vits#readme",
-    "dependencies": {},
+    "dependencies": {
+        "js-yaml": "^4.1.0"
+    },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^6.21.1-alpha.1",
         "@typescript-eslint/parser": "^6.21.1-alpha.1",
@@ -73,7 +75,7 @@
     },
     "koishi": {
         "description": {
-            "zh": "多平台 vits 聚合插件，目前支持 `vits-sample-api`, `GPT-SoVITS-2`, `bert-vits2`"
+            "zh": "多平台 vits 聚合插件，目前支持 `GPT-SoVITS-2`, 其他支持仍在更新...."
         },
         "service": {
             "implements": [
