@@ -56,5 +56,5 @@ export const SpeakerKeyIdMap = VitsConfigList.flatMap((config) => {
 
 // reverse SpeakerKeyIdMap
 export const SpeakerKeyMap = Object.fromEntries(
-    Object.entries(SpeakerKeyIdMap).map(([k, v]) => [v, k])
+    Object.entries(SpeakerKeyIdMap).map(([k, v]) => [v[1], v[0]])
 )

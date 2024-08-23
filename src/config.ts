@@ -12,7 +12,7 @@ export const Config = Schema.intersect([
 ])
 
 export const inject = {
-    optional: ['translator']
+    optional: ['translator', 'vits']
 }
 
 export interface Config {
