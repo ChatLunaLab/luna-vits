@@ -1,10 +1,10 @@
 <div align="center">
 
-# koishi-plugin-chatluna-translator
+# koishi-plugin-luna-vits
 
-_由 chatluna 中的大语言模型驱动提供的翻译服务_
+_多平台 vits 聚合插件，目前支持 `vits-sample-api`, `GPT-SoVITS-2`, `bert-vits2`_
 
-## [![npm](https://img.shields.io/npm/v/koishi-plugin-chatluna-character)](https://www.npmjs.com/package/koishi-plugin-chatluna-character) [![npm](https://img.shields.io/npm/dm/koishi-plugin-chatluna-character)](https://www.npmjs.com/package/koishi-plugin-chatluna-character) ![node version](https://img.shields.io/badge/node-%3E=18-green) ![github top language](https://img.shields.io/github/languages/top/ChatLunaLab/chatluna-character?logo=github)
+## [![npm](https://img.shields.io/npm/v/koishi-plugin-luna-vits)](https://www.npmjs.com/package/koishi-plugin-luna-vits) [![npm](https://img.shields.io/npm/dm/koishi-plugin-luna-vits)](https://www.npmjs.com/package/koishi-plugin-luna-vits) ![node version](https://img.shields.io/badge/node-%3E=18-green) ![github top language](https://img.shields.io/github/languages/top/ChatLunaLab/chatluna-character?logo=github)
 
 </div>
 
