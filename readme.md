@@ -10,15 +10,13 @@ _多平台 vits 聚合插件，目前支持 `vits-sample-api`, `GPT-SoVITS-2`, `
 
 ## 特性
 
-1. 基于 LLM 的高质量驱动翻译服务，可选模型
-2. 可让 LLM 自动识别源语言
-3. 费 token。
+1. 聚合多平台 vits 支持，覆盖热门 vits 接入
+2. 识别源语言和自动翻译支持
+3. 全手写 API 接入，不使用大包库，标准 gradio 流程。
 
 ## 部署
 
-在 Koishi 插件市场搜索 `chatluna-translator`，安装后启用即可。
-
-**插件依赖 ChatLuna，请确保在 ChatLuna 启动后再启用本插件。**
+在 Koishi 插件市场搜索 `luna-vits`，安装后启用即可。
 
 ## 使用
 
