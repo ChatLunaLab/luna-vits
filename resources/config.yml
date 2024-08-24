@@ -1,19 +1,22 @@
-- name: 'GPT-SoVITS_2'
+- name: 'GPT-SoVITS-2'
   type: 'GPT-SoVITS2'
   url: 'http://127.0.0.1:9880'
   config:
-      # 下面的路径为你在服务器上实际的音频路径
-      ref_audio_path: ''
-      aux_ref_audio_paths:
-          - ''
-          - '222'
-      prompt_text: '你好'
-      prompt_lang: 'zh'
+      # 这是基础的请求参数，可以设置一些东西，比如温度等
+      # 具体参数看 api_v2.py 里的参数
+      text_split_method: cut5
+      batch_size: 1
 
   speakers:
       - name: '丛雨'
-        # 是否为 api 启动后使用的默认权重模型，设置为 true 后将不自动切换
-        is_default: true
-      - name: '张三'
-        gpt_weights: ''
-        sovits_weights: ''
+        # 底模路径，不设置则不切换
+        gpt_weights: 'GPT_SoVITS/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt'
+        sovits_weights: 'SoVITS_weights_v2/Muramasa_e16_s6576.pth'
+        # 参考音频是在你那个服务器部署上的路径，不是你本地的路径！！！
+        ref_audio_path: 'audio/ムラサメ/mur001_062.ogg'
+        aux_ref_audio_paths:
+            - 'audio/ムラサメ/mur001_067.ogg'
+            - 'audio/ムラサメ/mur003_012.ogg'
+            - 'audio/ムラサメ/mur004_02.ogg'
+        prompt_text: 'ほれ、吾輩の言った通りであろう？　なのにどうして、ご主人は……'
+        prompt_lang: 'jp'

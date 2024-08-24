@@ -1,22 +1,26 @@
 import { Context, h } from 'koishi'
-import { VitsConfig } from '../type'
+import { BaseSpeaker, VitsConfig } from '../type'
 
 export abstract class VitsAdapter {
     abstract type: string
 
-    constructor(
-        private ctx: Context,
-        private config: VitsConfig
-    ) {}
+    constructor(public ctx: Context) {}
 
-    abstract predict(input: string, options: VitsAdapter.Config): Promise<h>
+    abstract predict(
+        input: string,
+        config: VitsConfig,
+        options: VitsAdapter.Config
+    ): Promise<h>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace VitsAdapter {
     export interface Config
-        extends Record<string, string | boolean | number | string[]> {
-        speaker: string
+        extends Record<
+            string,
+            string | boolean | number | string[] | BaseSpeaker
+        > {
+        speaker: BaseSpeaker | string
         language?: string
     }
 }

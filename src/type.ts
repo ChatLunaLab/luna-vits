@@ -14,19 +14,11 @@ export interface VitsConfig {
         : BaseSpeaker)[]
 }
 
-export interface GPTSoVITS2Speaker extends BaseSpeaker {
+export interface GPTSoVITS2Speaker extends BaseSpeaker, GPTSoVITS2Config {
     name: string
-    is_default?: boolean
-    gpt_weights: this extends { is_default: infer T }
-        ? T extends false
-            ? string
-            : never
-        : never
-    sovits_weights: this extends { is_default: infer T }
-        ? T extends false
-            ? string
-            : never
-        : never
+
+    gpt_weights?: string
+    sovits_weights?: string
 }
 
 export interface BaseSpeaker {}
@@ -36,7 +28,7 @@ export interface GradioSpeaker extends BaseSpeaker {
     fn_name: string
 }
 
-export interface GPTSoVITS2Config {
+export interface GPTSoVITS2Request {
     ref_audio_path: string
     aux_ref_audio_paths: string[]
     prompt_text: string
@@ -49,9 +41,14 @@ export interface GPTSoVITS2Config {
     batch_threshold?: number
     split_bucket?: boolean
     speed_factor?: number
-
+    text: string
+    text_lang: string
     seed?: number
+    media_type?: string
 }
+
+export interface GPTSoVITS2Config
+    extends Omit<GPTSoVITS2Request, 'text' | 'text_lang'> {}
 
 export interface GradioConfig
     extends Record<string, string | boolean | number | string[]> {

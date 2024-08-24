@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs'
-import { GradioConfig, VitsConfig } from './type'
+import { BaseSpeaker, GradioConfig, VitsConfig } from './type'
 import { load } from 'js-yaml'
 
 export const VitsConfigList: VitsConfig[] = (function () {
@@ -23,21 +23,25 @@ export const VitsConfigList: VitsConfig[] = (function () {
 
 let baseSpeakId = 114514
 
-// as { [key: number]: [config,name] }
+// as { [key: number]: [config,name,speaker] }
 export const SpeakerKeyIdMap = VitsConfigList.flatMap((config) => {
-    const result: [VitsConfig, string][] = []
+    const result: [VitsConfig, string, BaseSpeaker][] = []
 
     for (const speaker of config.speakers) {
         if (config.type === 'GPT-SoVITS2') {
             // five languages
-            for (const language of ['ZH', 'EN', 'JA', 'KO', 'YUO']) {
-                result.push([config, `${speaker.name}_${language}`])
+            for (const language of ['ZH', 'EN', 'JP', 'KO', 'YUO']) {
+                result.push([config, `${speaker.name}_${language}`, speaker])
             }
         } else if (config.type === 'gradio') {
             const requestConfig = config.config as GradioConfig
 
             if (requestConfig.langauges) {
-                result.push([config, `${speaker.name}_${requestConfig}`])
+                result.push([
+                    config,
+                    `${speaker.name}_${requestConfig}`,
+                    speaker
+                ])
             }
         }
     }
@@ -48,13 +52,16 @@ export const SpeakerKeyIdMap = VitsConfigList.flatMap((config) => {
     .map((k, index) => [k, baseSpeakId++])
     .reduce(
         (acc, [k, v]) => {
-            acc[v as number] = k as [VitsConfig, string]
+            acc[v as number] = k as [VitsConfig, string, BaseSpeaker]
             return acc
         },
-        {} as Record<number, [VitsConfig, string]>
+        {} as Record<number, [VitsConfig, string, BaseSpeaker]>
     )
 
 // reverse SpeakerKeyIdMap
 export const SpeakerKeyMap = Object.fromEntries(
-    Object.entries(SpeakerKeyIdMap).map(([k, v]) => [v[1], v[0]])
+    Object.entries(SpeakerKeyIdMap).map(([k, v]) => [
+        v[1],
+        [v[0], v[2]] as [VitsConfig, BaseSpeaker]
+    ])
 )

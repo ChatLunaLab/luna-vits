@@ -19,27 +19,30 @@ export class LunaVitsService extends Vits {
     }
 
     predict(input: string, options: VitsAdapter.Config): Promise<h> {
-        let [speaker, lang] = options.speaker.split('_')
+        let [, lang] = (options.speaker as string).split('_')
 
         if (!lang) {
             lang = 'ZH'
         }
 
-        const currentConfig = SpeakerKeyMap[speaker]
+        // TODO: auto translate
+
+        const currentConfig = SpeakerKeyMap[options.speaker as string]
 
         if (!currentConfig) {
             throw new Error('Speaker not found')
         }
 
-        return this._adapters[currentConfig.type].predict(
+        return this._adapters[currentConfig[0].type].predict(
             input,
+            currentConfig[0],
             Object.assign(
                 {
                     language: lang
                 },
                 options,
                 {
-                    speaker
+                    speaker: currentConfig[1]
                 }
             )
         )

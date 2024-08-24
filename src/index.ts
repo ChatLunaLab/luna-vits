@@ -4,6 +4,7 @@ import { Context } from 'koishi'
 import { Config } from './config'
 import { LunaVitsService } from './service'
 import { SpeakerKeyMap } from './constants'
+import { GPTSoVITS2Adapter } from './adapters'
 
 export function apply(ctx: Context, config: Config) {
     ctx.plugin(LunaVitsService)
@@ -11,9 +12,9 @@ export function apply(ctx: Context, config: Config) {
     ctx.inject(['vits'], async (ctx) => {
         const lunaVits = ctx.vits as LunaVitsService
 
-        // lunaVits.addAdapter(new GPTSoVITS2Adpater(ctx, config))
+        lunaVits.addAdapter(new GPTSoVITS2Adapter(ctx))
     })
-    ctx.command('lunavits <text:text>', 'AIbetavits语音合成帮助')
+    ctx.command('lunavits <text:text>', 'lunavits 语音合成帮助')
         .option('speaker', '-s [speaker:string] 语音合成的讲者', {
             fallback: config.defaultSpeaker
         })
@@ -23,7 +24,7 @@ export function apply(ctx: Context, config: Config) {
                 return null
             }
 
-            const finalSpeaker = options.speaker
+            const finalSpeaker = options.speaker ?? config.defaultSpeaker
 
             const version =
                 SpeakerKeyMap[finalSpeaker] ??
