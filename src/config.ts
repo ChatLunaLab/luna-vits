@@ -2,9 +2,6 @@ import { Schema } from 'koishi'
 
 export const Config = Schema.intersect([
     Schema.object({
-        /* Schema.union(
-            Object.values(SpeakerKeyIdMap).map((s) => s[1])
-        ) */
         defaultSpeaker: Schema.dynamic('speaker')
             .description('全局默认的讲者。')
             .required()

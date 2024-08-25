@@ -43,6 +43,7 @@ export function apply(ctx: Context, config: Config) {
 
                 const version =
                     speakerKeyMap[finalSpeaker] ??
+                    speakerKeyMap[finalSpeaker + '_AUTO'] ??
                     speakerKeyMap[finalSpeaker + '_ZH']
                 if (!version) {
                     return `找不到这个 ${finalSpeaker} 讲者，请检查你的输入。`

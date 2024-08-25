@@ -43,23 +43,32 @@ export class LunaVitsProvider extends DataService<string> {
     }
 
     async loadConfig() {
-        const dir = path.resolve('data/luna-vits')
-        const file = path.resolve(dir, 'config.yml')
-
         try {
-            await fs.promises.access(file)
+            await fs.promises.access(this.resolveConfigPath())
         } catch {
             const defaultPath = path.join(__dirname, '../resources/config.yml')
 
             try {
-                await fs.promises.mkdir(dir, { recursive: true })
+                await fs.promises.mkdir(this.resolveConfigDir(), {
+                    recursive: true
+                })
             } catch (e) {
                 //
             }
-            await fs.promises.copyFile(defaultPath, file)
+            await fs.promises.copyFile(defaultPath, this.resolveConfigPath())
         }
 
-        return load(await fs.promises.readFile(file, 'utf-8')) as VitsConfig[]
+        return load(
+            await fs.promises.readFile(this.resolveConfigPath(), 'utf-8')
+        ) as VitsConfig[]
+    }
+
+    resolveConfigDir() {
+        return path.resolve(this.ctx.baseDir, 'data/luna-vits')
+    }
+
+    resolveConfigPath() {
+        return path.resolve(this.resolveConfigDir(), 'config.yml')
     }
 
     watchConfig() {
@@ -180,21 +189,17 @@ export class LunaVitsProvider extends DataService<string> {
 
 let baseSpeakId = 114514
 
+declare module 'koishi' {
+    interface Context {
+        luna_vits_data: LunaVitsProvider
+    }
+}
+
 declare module '@koishijs/plugin-console' {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Console {
         interface Services {
             luna_vits_data: LunaVitsProvider
         }
-    }
-}
-
-declare module 'koishi' {
-    interface Events {
-        'luna_vits/config_changed': () => void
-    }
-
-    interface Context {
-        luna_vits_data: LunaVitsProvider
     }
 }
