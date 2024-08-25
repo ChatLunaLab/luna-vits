@@ -39,7 +39,7 @@ export class GPTSoVITS2Adapter extends VitsAdapter {
             options
         )
 
-        console.log(JSON.stringify(payload))
+        this.ctx.logger.debug(JSON.stringify(payload))
 
         try {
             const response = await this.ctx.http.post(

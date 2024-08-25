@@ -1,26 +1,26 @@
 - id: oe9vbo
   name: yakumo
   config:
-    pipeline:
-      build:
-        - tsc
-        - esbuild
-        - client
-      clean:
-        - tsc --clean
+      pipeline:
+          build:
+              - tsc
+              - esbuild
+              - client
+          clean:
+              - tsc --clean
 - id: b6l61h
   name: yakumo-esbuild
 - id: xrx8ri
   name: yakumo-tsc
-- id: cokhk4
-  name: '@koishijs/client/lib'
 - id: 43we4r
   name: yakumo/prepare
 - id: b7kw1g
   name: yakumo/upgrade
-- id: ue8hwz
+- id: q510tm
   name: yakumo/version
-- id: ksec0h
+- id: b9vl8y
   name: yakumo/publish
-- id: m4eq46
+- id: xkcs2p
   name: yakumo/run
+- id: 3j4jdv
+  name: '@koishijs/client/lib'

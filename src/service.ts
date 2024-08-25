@@ -2,7 +2,6 @@ import { Context, h } from 'koishi'
 import { Config } from './config'
 import Vits from '@initencounter/vits'
 import { VitsAdapter } from './adapters/base'
-import { SpeakerKeyIdMap, SpeakerKeyMap } from './constants'
 
 export class LunaVitsService extends Vits {
     private _adapters: Record<string, VitsAdapter> = {}
@@ -18,16 +17,18 @@ export class LunaVitsService extends Vits {
         this._adapters[adapter.type] = adapter
     }
 
-    predict(input: string, options: VitsAdapter.Config): Promise<h> {
+    async predict(input: string, options: VitsAdapter.Config): Promise<h> {
         let [, lang] = (options.speaker as string).split('_')
 
         if (!lang) {
             lang = 'ZH'
         }
 
+        const speakerKeyMap = await this.ctx.luna_vits_data.getSpeakerKeyMap()
+
         // TODO: auto translate
 
-        const currentConfig = SpeakerKeyMap[options.speaker as string]
+        const currentConfig = speakerKeyMap[options.speaker as string]
 
         if (!currentConfig) {
             throw new Error('Speaker not found')
@@ -48,9 +49,14 @@ export class LunaVitsService extends Vits {
         )
     }
 
-    say(options: Vits.Result): Promise<h> {
+    async say(options: Vits.Result): Promise<h> {
+        const speakerKeyIdMap =
+            await this.ctx.luna_vits_data.getSpeakerKeyIdMap()
+
         return this.predict(options.input, {
-            speaker: SpeakerKeyIdMap[options.speaker_id][1]
+            speaker:
+                speakerKeyIdMap[options.speaker_id]?.[1] ??
+                this.config.defaultSpeaker
         })
     }
 }

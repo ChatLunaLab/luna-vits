@@ -3,18 +3,16 @@
         "rootDir": "src",
         "outDir": "lib",
         "target": "es2022",
-        "emitDeclarationOnly": true,
         "module": "esnext",
         "declaration": true,
         "composite": true,
         "incremental": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
-        "moduleResolution": "Bundler",
-        "jsx": "react-jsx",
-        "jsxImportSource": "@satorijs/element"
+        "emitDeclarationOnly": true,
+        "moduleResolution": "bundler",
+
+        "types": ["node", "yml-register/types"]
     },
-    "include": [
-        "src"
-    ]
+    "include": ["src"]
 }

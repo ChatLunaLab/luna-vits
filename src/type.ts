@@ -14,6 +14,8 @@ export interface VitsConfig {
         : BaseSpeaker)[]
 }
 
+export type Speaker = VitsConfig['speakers'][number]
+
 export interface GPTSoVITS2Speaker extends BaseSpeaker, GPTSoVITS2Config {
     name: string
 
