@@ -2,6 +2,7 @@ import { Context, h } from 'koishi'
 import { Config } from './config'
 import Vits from '@initencounter/vits'
 import { VitsAdapter } from './adapters/base'
+import { VitsConfig } from './type'
 
 export class LunaVitsService extends Vits {
     private _adapters: Record<string, VitsAdapter> = {}
@@ -18,13 +19,24 @@ export class LunaVitsService extends Vits {
     }
 
     async predict(input: string, options: VitsAdapter.Config): Promise<h> {
-        let [, lang] = (options.speaker as string).split('_')
+        if (input.length > this.config.maxLength) {
+            return h.text('输入的字符串长度不能超过 ' + this.config.maxLength)
+        }
+
+        // lang:
+        // with regex
+        // get last _
+        // xx_xx_xxx -> xxx
+        // xx_xxx -> xxx
+
+        let lang = options.speaker.toString().split('_')?.pop()
 
         if (!lang) {
             lang = 'ZH'
         }
 
-        const speakerKeyMap = await this.ctx.luna_vits_data.getSpeakerKeyMap()
+        const speakerKeyMap =
+            await this.ctx.console.services.luna_vits_data.getSpeakerKeyMap()
 
         // TODO: auto translate
 
@@ -51,7 +63,7 @@ export class LunaVitsService extends Vits {
 
     async say(options: Vits.Result): Promise<h> {
         const speakerKeyIdMap =
-            await this.ctx.luna_vits_data.getSpeakerKeyIdMap()
+            await this.ctx.console.services.luna_vits_data.getSpeakerKeyIdMap()
 
         return this.predict(options.input, {
             speaker:
@@ -59,4 +71,10 @@ export class LunaVitsService extends Vits {
                 this.config.defaultSpeaker
         })
     }
+
+    getSpeakerList(config: VitsConfig) {
+        return this._adapters[config.type].getSpeakerList(config)
+    }
+
+    static inject = ['console']
 }

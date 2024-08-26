@@ -1,10 +1,17 @@
 import path from 'path'
 import fs, { watch } from 'fs'
-import { GradioConfig, GradioSpeaker, Speaker, VitsConfig } from './type'
+import {
+    GradioConfig,
+    GradioSpeaker,
+    Speaker,
+    VitsConfig,
+    VitsSimpleApiSpeaker
+} from './type'
 import { load } from 'js-yaml'
 import { DataService } from '@koishijs/plugin-console'
 import { Awaitable, Context, Schema } from 'koishi'
 import { PromiseLock } from './utils'
+import { LunaVitsService } from './service'
 
 export class LunaVitsProvider extends DataService<string> {
     private vitsConfig: VitsConfig[] = []
@@ -58,9 +65,23 @@ export class LunaVitsProvider extends DataService<string> {
             await fs.promises.copyFile(defaultPath, this.resolveConfigPath())
         }
 
-        return load(
+        const configs = load(
             await fs.promises.readFile(this.resolveConfigPath(), 'utf-8')
         ) as VitsConfig[]
+
+        const filteredConfigs = configs.filter(
+            (c) => c.enabled === true || c.enabled == null
+        )
+
+        for (const config of filteredConfigs) {
+            const speakerList = await (
+                this.ctx.vits as LunaVitsService
+            ).getSpeakerList(config)
+
+            config.speakers = speakerList
+        }
+
+        return filteredConfigs
     }
 
     resolveConfigDir() {
@@ -88,9 +109,12 @@ export class LunaVitsProvider extends DataService<string> {
                 if (debounceTimeout) {
                     clearTimeout(debounceTimeout)
                 }
-                debounceTimeout = setTimeout(() => {
+                debounceTimeout = setTimeout(async () => {
                     this.ctx.logger.info('config changed, refreshing')
-                    this.refresh()
+                    await this.refresh()
+                    this.ctx.logger.info(
+                        `Successfully loaded ${Object.keys(this.speakerKeyIdMap).length} speakers`
+                    )
                 }, 300) // Adjust the debounce delay as needed
             }
         )
@@ -104,7 +128,7 @@ export class LunaVitsProvider extends DataService<string> {
         if (config.type === 'GPT-SoVITS2') {
             // five languages
 
-            for (const language of ['ZH', 'EN', 'JP', 'KO', 'YUO', 'AUTO']) {
+            for (const language of ['ZH', 'EN', 'JA', 'KO', 'YUO', 'AUTO']) {
                 result.push([config, `${speaker.name}_${language}`, speaker])
             }
         } else if (config.type === 'gradio') {
@@ -116,11 +140,25 @@ export class LunaVitsProvider extends DataService<string> {
                 for (const language of languages) {
                     result.push([
                         config,
-                        `${speaker.name}_${language}`,
+                        `${speaker.name}_${language.toUpperCase()}`,
                         speaker
                     ])
                 }
             }
+        } else if (config.type === 'vits-simple-api') {
+            speaker = speaker as VitsSimpleApiSpeaker
+
+            const languages = speaker.languages
+            if (languages) {
+                for (const language of languages) {
+                    result.push([
+                        config,
+                        `${speaker.name}_${language.toUpperCase()}`,
+                        speaker
+                    ])
+                }
+            }
+            result.push([config, `${speaker.name}_AUTO`, speaker])
         }
     }
 
@@ -159,7 +197,7 @@ export class LunaVitsProvider extends DataService<string> {
     get() {
         return this.lock.runLocked(async () => {
             const speakers = Object.entries(this.speakerKeyIdMap)
-                .map(([k, v]) => [v[2].name, k])
+                .map(([k, v]) => [v[1], k])
                 .map(([speaker, id]) => `| ${speaker} | ${id} |`)
                 .join('\n')
 
@@ -185,15 +223,11 @@ export class LunaVitsProvider extends DataService<string> {
     }
 
     static name = 'luna-vits-config'
+
+    static inject = ['vits']
 }
 
 let baseSpeakId = 114514
-
-declare module 'koishi' {
-    interface Context {
-        luna_vits_data: LunaVitsProvider
-    }
-}
 
 declare module '@koishijs/plugin-console' {
     // eslint-disable-next-line @typescript-eslint/no-namespace

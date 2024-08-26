@@ -5,8 +5,9 @@ import { Config } from './config'
 import { LunaVitsService } from './service'
 import { GPTSoVITS2Adapter } from './adapters'
 import { resolve } from 'path'
-import {} from '@koishijs/plugin-console'
+import type {} from '@koishijs/plugin-console'
 import { LunaVitsProvider } from './constants'
+import { VitsSimpleAPIAdapter } from './adapters/vits_simple_api'
 
 export function apply(ctx: Context, config: Config) {
     ctx.inject(['console'], (ctx) => {
@@ -19,46 +20,70 @@ export function apply(ctx: Context, config: Config) {
     ctx.plugin(LunaVitsService)
     ctx.plugin(LunaVitsProvider)
 
-    ctx.inject(['vits', 'luna_vits_data'], async (ctx) => {
-        const lunaVits = ctx.vits as LunaVitsService
+    ctx.inject(
+        ['vits', 'console', 'console.services.luna_vits_data'],
+        async (ctx) => {
+            const lunaVits = ctx.vits as LunaVitsService
 
-        lunaVits.addAdapter(new GPTSoVITS2Adapter(ctx))
+            lunaVits.addAdapter(new GPTSoVITS2Adapter(ctx))
+            lunaVits.addAdapter(new VitsSimpleAPIAdapter(ctx))
 
-        ctx.luna_vits_data.refresh()
-
-        ctx.command('lunavits <text:text>', 'lunavits 语音合成帮助')
-            .option('speaker', '-s [speaker:string] 语音合成的讲者', {
-                fallback: config.defaultSpeaker
-            })
-            .action(async ({ session, options }, text) => {
-                if (!text) {
-                    await session.execute('betavits -h')
-                    return null
+            function getSpeaker(
+                speakerKeyMap: Awaited<
+                    ReturnType<
+                        typeof ctx.console.services.luna_vits_data.getSpeakerKeyMap
+                    >
+                >,
+                speaker: string
+            ) {
+                for (const key of [
+                    speaker,
+                    speaker + '_AUTO',
+                    speaker + '_ZH'
+                ]) {
+                    if (speakerKeyMap[key]) {
+                        return [speakerKeyMap[key], key]
+                    }
                 }
 
-                const speakerKeyMap =
-                    await ctx.luna_vits_data.getSpeakerKeyMap()
+                return [null, null]
+            }
 
-                const finalSpeaker = options.speaker ?? config.defaultSpeaker
+            ctx.command('lunavits <text:text>', 'lunavits 语音合成')
+                .option('speaker', '-s [speaker:string] 语音合成的讲者', {
+                    fallback: config.defaultSpeaker
+                })
+                .action(async ({ session, options }, text) => {
+                    if (!text) {
+                        await session.execute('lunavits -h')
+                        return null
+                    }
 
-                const version =
-                    speakerKeyMap[finalSpeaker] ??
-                    speakerKeyMap[finalSpeaker + '_AUTO'] ??
-                    speakerKeyMap[finalSpeaker + '_ZH']
-                if (!version) {
-                    return `找不到这个 ${finalSpeaker} 讲者，请检查你的输入。`
-                }
+                    const speakerKeyMap =
+                        await ctx.console.services.luna_vits_data.getSpeakerKeyMap()
 
-                const lunaVits = ctx.vits as LunaVitsService
+                    const [speakerConfig, finalSpeaker] = getSpeaker(
+                        speakerKeyMap,
+                        options.speaker ?? config.defaultSpeaker
+                    )
 
-                return await lunaVits.predict(
-                    text,
-                    Object.assign(options, {
-                        speaker: finalSpeaker
-                    })
-                )
-            })
-    })
+                    if (!speakerConfig) {
+                        return `找不到这个 ${finalSpeaker} 讲者，请检查你的输入。`
+                    }
+
+                    const lunaVits = ctx.vits as LunaVitsService
+
+                    return await lunaVits.predict(
+                        text,
+                        Object.assign(options, {
+                            speaker: finalSpeaker
+                        })
+                    )
+                })
+
+            await ctx.console.services.luna_vits_data.refresh()
+        }
+    )
 }
 
 export * from './config'

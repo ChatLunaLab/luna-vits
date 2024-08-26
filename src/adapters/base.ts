@@ -11,6 +11,10 @@ export abstract class VitsAdapter {
         config: VitsConfig,
         options: VitsAdapter.Config
     ): Promise<h>
+
+    async getSpeakerList(config: VitsConfig) {
+        return config.speakers
+    }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace

@@ -14,6 +14,21 @@ export function removeProperty<T extends object, K extends keyof T>(
     return result as Omit<T, K>
 }
 
+export function selectProperty<T extends object, K extends keyof T>(
+    value: T,
+    properties: K[]
+): Pick<T, K> {
+    const result: Partial<T> = {}
+
+    for (const property of properties) {
+        if (property in value) {
+            result[property] = value[property]
+        }
+    }
+
+    return result as Pick<T, K>
+}
+
 export class PromiseLock {
     private _lock = false
 
@@ -47,5 +62,20 @@ export class PromiseLock {
 
     unlock() {
         this._lock = false
+    }
+}
+
+export function getAudioFileExtension(filePath: string) {
+    switch (filePath) {
+        case 'wav':
+            return 'audio/wav'
+        case 'mp3':
+            return 'audio/mp3'
+        case 'flac':
+            return 'audio/flac'
+        case 'slik':
+            return 'audio/slik'
+        default:
+            return 'audio/wav'
     }
 }

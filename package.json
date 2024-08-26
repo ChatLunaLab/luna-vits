@@ -66,7 +66,7 @@
     },
     "koishi": {
         "description": {
-            "zh": "多平台 vits 聚合插件，目前支持 `GPT-SoVITS-2`, 其他支持仍在更新...."
+            "zh": "多平台 vits 聚合插件，目前支持 `GPT-SoVITS-2` 和 `vits-simple-api`, 其他支持仍在更新...."
         },
         "service": {
             "implements": [

@@ -39,8 +39,6 @@ export class GPTSoVITS2Adapter extends VitsAdapter {
             options
         )
 
-        this.ctx.logger.debug(JSON.stringify(payload))
-
         try {
             const response = await this.ctx.http.post(
                 `${config.url}/tts`,
@@ -135,8 +133,8 @@ export class GPTSoVITS2Adapter extends VitsAdapter {
     }
 }
 
-function mappingLanguageToGPTSoVits(lang: string) {
-    switch (lang) {
+export function mappingLanguageToGPTSoVits(lang: string) {
+    switch (lang.toLocaleLowerCase()) {
         case 'zh':
             return 'zh'
         case 'en':
@@ -145,7 +143,7 @@ function mappingLanguageToGPTSoVits(lang: string) {
         case 'ja':
             return 'ja'
         default:
-            return lang
+            return lang.toLocaleLowerCase()
     }
 }
 

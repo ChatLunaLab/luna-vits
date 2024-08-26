@@ -1,26 +1,73 @@
-export interface VitsConfig {
+export interface VitsConfig<
+    T extends 'GPT-SoVITS2' | 'vits-simple-api' | 'gradio' =
+        | 'GPT-SoVITS2'
+        | 'vits-simple-api'
+        | 'gradio'
+> {
     name?: string
-    type: 'GPT-SoVITS2' | 'gradio'
+    type: T
     url: string
+    enabled?: boolean
     config: this extends { type: infer T }
         ? T extends 'GPT-SoVITS2'
             ? GPTSoVITS2Config
-            : GradioConfig
+            : T extends 'vits-simple-api'
+              ? VitsSimpleApiConfig
+              : GradioConfig
         : GradioConfig
     speakers: (this extends { type: infer T }
         ? T extends 'GPT-SoVITS2'
             ? GPTSoVITS2Speaker
-            : GradioSpeaker
+            : T extends 'vits-simple-api'
+              ? VitsSimpleApiSpeaker
+              : GradioSpeaker
         : BaseSpeaker)[]
 }
 
 export type Speaker = VitsConfig['speakers'][number]
+
+export interface VitsSimpleApiConfig {
+    auto_pull_speaker?: boolean
+    api_key?: string
+}
 
 export interface GPTSoVITS2Speaker extends BaseSpeaker, GPTSoVITS2Config {
     name: string
 
     gpt_weights?: string
     sovits_weights?: string
+}
+
+export interface VitsSimpleApiSpeaker
+    extends BaseSpeaker,
+        Record<string, string | boolean | number | string[]> {
+    name: string
+    type: 'VITS' | 'W2V2-VITS' | 'BERT-VITS2' | 'GPT-SOVITS'
+    languages: string[]
+    id: number
+
+    // GPT-SoVITS 的配置
+    segment_size?: number
+    batch_size?: number
+    temperature?: number
+    top_p?: number
+    speed?: number
+    top_k?: number
+    preset?: string
+    prompt_text?: string
+    prompt_lang?: string
+    reference_audio?: string
+
+    // BERT-VITS2 / VITS / W2V2-VITS 的配置
+    noise?: number
+    noise_w?: number
+    sdp_ratio?: number
+    text_prompt?: string
+
+    // W2V2-VITS 的配置
+    emotion?: number
+
+    format?: string
 }
 
 export interface BaseSpeaker {}
