@@ -25,7 +25,7 @@
 # vits-simple-api 的配置
 - name: 'Vits-Simple-API'
   type: 'vits-simple-api'
-  enabled: true
+  enabled: false
   url: 'http://127.0.0.1:23456'
   config:
       # 是否自动拉取 speaker 列表，关闭后需要手动指定 speaker，开启后和会下面的 speakers 合并拉取
