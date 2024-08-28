@@ -24,7 +24,20 @@ export function apply(ctx: Context, config: Config) {
     ctx.plugin(LunaVitsProvider)
 
     ctx.inject(
-        ['vits', 'console', 'console.services.luna_vits_data'],
+        {
+            vits: {
+                required: true
+            },
+            console: {
+                required: true
+            },
+            'console.services.luna_vits_data': {
+                required: true
+            },
+            gradio: {
+                required: false
+            }
+        },
         async (ctx) => {
             const lunaVits = ctx.vits as LunaVitsService
 

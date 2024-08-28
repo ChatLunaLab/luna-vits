@@ -229,7 +229,17 @@ export class LunaVitsProvider extends DataService<string> {
 
     static name = 'luna-vits-config'
 
-    static inject = ['vits']
+    static inject = {
+        console: {
+            required: true
+        },
+        vits: {
+            required: true
+        },
+        gradio: {
+            required: false
+        }
+    } as unknown as string[]
 }
 
 let baseSpeakId = 114514
