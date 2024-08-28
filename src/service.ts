@@ -8,7 +8,7 @@ export class LunaVitsService extends Vits {
     private _adapters: Record<string, VitsAdapter> = {}
 
     constructor(
-        ctx: Context,
+        public ctx: Context,
         public config: Config
     ) {
         super(ctx)
@@ -76,5 +76,12 @@ export class LunaVitsService extends Vits {
         return this._adapters[config.type].getSpeakerList(config)
     }
 
-    static inject = ['console']
+    static inject = {
+        console: {
+            required: true
+        },
+        gradio: {
+            required: false
+        }
+    }
 }

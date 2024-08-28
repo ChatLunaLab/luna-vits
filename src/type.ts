@@ -72,9 +72,11 @@ export interface VitsSimpleApiSpeaker
 
 export interface BaseSpeaker {}
 
-export interface GradioSpeaker extends BaseSpeaker {
+export interface GradioSpeaker
+    extends BaseSpeaker,
+        Record<string, string | number | boolean | string[]> {
     name: string
-    fn_name: string
+    fn_index: string | number
 }
 
 export interface GPTSoVITS2Request {
@@ -101,5 +103,8 @@ export interface GPTSoVITS2Config
 
 export interface GradioConfig
     extends Record<string, string | boolean | number | string[]> {
+    type: string
+    fn_index: string | number
     languages?: string[]
+    auto_pull_speaker?: boolean
 }

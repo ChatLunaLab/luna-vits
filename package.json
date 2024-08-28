@@ -1,83 +1,90 @@
 {
-  "name": "koishi-plugin-luna-vits",
-  "description": "Multi-platform vits aggregation plugin",
-  "version": "0.1.1",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "types": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "dist",
-    "resources"
-  ],
-  "license": "MIT",
-  "keywords": [
-    "koishi",
-    "plugin",
-    "service",
-    "vits"
-  ],
-  "author": "dingyi222666 <dingyi222666@foxmail.com>",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ChatLunaLab/luna-vits.git",
-    "directory": "."
-  },
-  "bugs": {
-    "url": "https://github.com/ChatLunaLab/luna-vits/issues"
-  },
-  "homepage": "https://github.com/ChatLunaLab/luna-vits#readme",
-  "dependencies": {
-    "@dingyi222666/event-stream": "^0.0.1",
-    "@initencounter/vits": "^0.0.3",
-    "js-yaml": "^4.1.0",
-    "semiver": "^1.1.0"
-  },
-  "devDependencies": {
-    "@koishijs/client": "^5.29.3",
-    "@typescript-eslint/eslint-plugin": "^6.21.1-alpha.1",
-    "@typescript-eslint/parser": "^6.21.1-alpha.1",
-    "esbuild": "^0.23.1",
-    "esbuild-register": "npm:@shigma/esbuild-register@^1.1.1",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^16.6.2",
-    "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-promise": "^6.6.0",
-    "yakumo": "^1.0.0-beta.18",
-    "yakumo-esbuild": "^1.0.0-beta.6",
-    "yakumo-mocha": "^1.0.0-beta.2",
-    "yakumo-tsc": "^1.0.0-beta.4"
-  },
-  "peerDependencies": {
-    "@koishijs/plugin-console": "^5.29.3",
-    "koishi": "^4.17.9"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "scripts": {
-    "build": "yarn yakumo build",
-    "bump": "yarn yakumo version",
-    "dep": "yarn yakumo upgrade",
-    "pub": "yarn yakumo publish",
-    "lint": "yarn eslint src --ext=ts",
-    "lint-fix": "yarn eslint src --ext=ts --fix"
-  },
-  "koishi": {
-    "description": {
-      "zh": "多平台 vits 聚合插件，目前支持 `GPT-SoVITS-2` 和 `vits-simple-api`, 其他支持仍在更新...."
-    },
-    "service": {
-      "implements": [
+    "name": "koishi-plugin-luna-vits",
+    "description": "Multi-platform vits aggregation plugin",
+    "version": "0.1.1",
+    "main": "lib/index.js",
+    "typings": "lib/index.d.ts",
+    "types": "lib/index.d.ts",
+    "files": [
+        "lib",
+        "dist",
+        "resources"
+    ],
+    "license": "MIT",
+    "keywords": [
+        "koishi",
+        "plugin",
+        "service",
         "vits"
-      ],
-      "optional": [
-        "translator",
-        "console"
-      ]
+    ],
+    "author": "dingyi222666 <dingyi222666@foxmail.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ChatLunaLab/luna-vits.git",
+        "directory": "."
+    },
+    "bugs": {
+        "url": "https://github.com/ChatLunaLab/luna-vits/issues"
+    },
+    "homepage": "https://github.com/ChatLunaLab/luna-vits#readme",
+    "dependencies": {
+        "@dingyi222666/event-stream": "^0.0.1",
+        "@initencounter/vits": "^0.0.3",
+        "js-yaml": "^4.1.0",
+        "semiver": "^1.1.0"
+    },
+    "devDependencies": {
+        "@koishijs/client": "^5.29.3",
+        "@typescript-eslint/eslint-plugin": "^6.21.1-alpha.1",
+        "@typescript-eslint/parser": "^6.21.1-alpha.1",
+        "esbuild": "^0.23.1",
+        "esbuild-register": "npm:@shigma/esbuild-register@^1.1.1",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-config-standard": "^17.1.0",
+        "eslint-plugin-import": "^2.29.1",
+        "eslint-plugin-n": "^16.6.2",
+        "eslint-plugin-prettier": "^5.2.1",
+        "eslint-plugin-promise": "^6.6.0",
+        "yakumo": "^1.0.0-beta.18",
+        "yakumo-esbuild": "^1.0.0-beta.6",
+        "yakumo-mocha": "^1.0.0-beta.2",
+        "yakumo-tsc": "^1.0.0-beta.4"
+    },
+    "peerDependencies": {
+        "@koishijs/plugin-console": "^5.29.3",
+        "koishi": "^4.17.9",
+        "koishi-plugin-gradio-service": "^0.0.1"
+    },
+    "peerDependenciesMeta": {
+        "koishi-plugin-gradio-service": {
+            "optional": true
+        }
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "scripts": {
+        "build": "yarn yakumo build",
+        "bump": "yarn yakumo version",
+        "dep": "yarn yakumo upgrade",
+        "pub": "yarn yakumo publish",
+        "lint": "yarn eslint src --ext=ts",
+        "lint-fix": "yarn eslint src --ext=ts --fix"
+    },
+    "koishi": {
+        "description": {
+            "zh": "多平台 vits 聚合插件，目前支持 `GPT-SoVITS-2` 和 `vits-simple-api`, 其他支持仍在更新...."
+        },
+        "service": {
+            "implements": [
+                "vits"
+            ],
+            "optional": [
+                "translator",
+                "console",
+                "gradio"
+            ]
+        }
     }
-  }
 }

@@ -135,7 +135,12 @@ export class LunaVitsProvider extends DataService<string> {
             const requestConfig = config.config as GradioConfig
             speaker = speaker as GradioSpeaker
 
-            const languages = requestConfig.languages as string[]
+            const languages = (requestConfig.languages as string[]) ?? [
+                'ZH',
+                'EN',
+                'JA',
+                'AUTO'
+            ]
             if (languages) {
                 for (const language of languages) {
                     result.push([

@@ -60,3 +60,16 @@
         id: 0
         # 可以使用 vits-simple-api 的预设
         preset: 'default'
+
+- name: 'Gradio'
+  type: 'gradio'
+  enabled: true
+  url: 'https://lumia1998-murasame.hf.space'
+
+  config:
+      - type: 'bert-vits2'
+        # 是否自动拉取 speaker 列表，关闭后需要手动指定 speaker，开启后和会下面的 speakers 合并拉取
+        auto_pull_speaker: true
+        # 手动指定语言，注意需要区分大小写
+        # 开启自动拉取 speaker 后就不用了
+        # languages: ['ZH']
