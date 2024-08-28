@@ -3,13 +3,16 @@
 import { Context } from 'koishi'
 import { Config } from './config'
 import { LunaVitsService } from './service'
-import { GPTSoVITS2Adapter } from './adapters'
+import { GPTSoVITS2Adapter, VitsSimpleAPIAdapter } from './adapters'
 import { resolve } from 'path'
 import type {} from '@koishijs/plugin-console'
 import { LunaVitsProvider } from './constants'
-import { VitsSimpleAPIAdapter } from './adapters/vits_simple_api'
+import * as eventStream from '@dingyi222666/event-stream'
+import { GradioClient } from './gradio'
 
 export function apply(ctx: Context, config: Config) {
+    ctx.plugin(eventStream)
+
     ctx.inject(['console'], (ctx) => {
         ctx.console.addEntry({
             dev: resolve(__dirname, '../client/index.ts'),
@@ -82,6 +85,22 @@ export function apply(ctx: Context, config: Config) {
                 })
 
             await ctx.console.services.luna_vits_data.refresh()
+
+            const app = await GradioClient.connect(
+                ctx,
+                'https://xzjosh-azuma-bert-vits2-0-2.hf.space/--replicas/lyypv/'
+            )
+            const result = await app.predict('/tts_fn', [
+                'Hello!!', // string  in '输入文本内容' Textbox component
+                '东雪莲', // string  in '选择说话人' Dropdown component
+                0, // number (numeric value between 0 and 1) in 'SDP/DP混合比' Slider component
+                0.1, // number (numeric value between 0.1 and 2) in '感情' Slider component
+                0.1, // number (numeric value between 0.1 and 2) in '音素长度' Slider component
+                0.1, // number (numeric value between 0.1 and 2) in '语速' Slider component
+                'ZH' // string  in '选择语言' Dropdown component
+            ])
+
+            console.log(result)
         }
     )
 }

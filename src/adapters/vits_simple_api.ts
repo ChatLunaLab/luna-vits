@@ -238,32 +238,37 @@ export class VitsSimpleAPIAdapter extends VitsAdapter {
     }
 
     private async _fetchSpeakerList(config: VitsConfig<'vits-simple-api'>) {
-        const result: VitsSimpleApiSpeaker[] = []
-        const speakerMap = (await this.ctx.http.get(
-            `${config.url}/voice/speakers`,
-            {
-                headers: {
-                    'Content-Type': 'application/json'
+        try {
+            const result: VitsSimpleApiSpeaker[] = []
+            const speakerMap = (await this.ctx.http.get(
+                `${config.url}/voice/speakers`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            )) as Record<string, Speakers[]>
+
+            for (const [key, value] of Object.entries(speakerMap)) {
+                if (key === 'HUBERT-VITS') {
+                    continue
+                }
+
+                for (const speaker of value) {
+                    result.push({
+                        name: speaker.name,
+                        id: speaker.id,
+                        languages: speaker.lang,
+                        type: key as VitsSimpleApiSpeaker['type']
+                    })
                 }
             }
-        )) as Record<string, Speakers[]>
 
-        for (const [key, value] of Object.entries(speakerMap)) {
-            if (key === 'HUBERT-VITS') {
-                continue
-            }
-
-            for (const speaker of value) {
-                result.push({
-                    name: speaker.name,
-                    id: speaker.id,
-                    languages: speaker.lang,
-                    type: key as VitsSimpleApiSpeaker['type']
-                })
-            }
+            return result
+        } catch (error) {
+            this.ctx.logger.error('Failed to fetch speaker list:', error)
+            return []
         }
-
-        return result
     }
 }
 

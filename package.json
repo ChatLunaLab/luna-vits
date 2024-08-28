@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-luna-vits",
   "description": "Multi-platform vits aggregation plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "types": "lib/index.d.ts",
@@ -28,8 +28,10 @@
   },
   "homepage": "https://github.com/ChatLunaLab/luna-vits#readme",
   "dependencies": {
+    "@dingyi222666/event-stream": "^0.0.1",
     "@initencounter/vits": "^0.0.3",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "semiver": "^1.1.0"
   },
   "devDependencies": {
     "@koishijs/client": "^5.29.3",

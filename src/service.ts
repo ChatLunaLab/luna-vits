@@ -29,7 +29,7 @@ export class LunaVitsService extends Vits {
         // xx_xx_xxx -> xxx
         // xx_xxx -> xxx
 
-        let lang = options.speaker.toString().split('_')?.pop()
+        let lang = (options.speaker as string)?.split('_')?.pop()
 
         if (!lang) {
             lang = 'ZH'

@@ -25,3 +25,4 @@ _多平台 vits 聚合插件，目前支持 `GPT-SoVITS-2` 和 `vits-simple-api`
 ## 感谢
 
 感谢 [better-dxl-bert-vits](https://github.com/TR0MXI/koishi-plugin-better-dxl-bert-vits) 为本项目带来的启发。
+感谢 [gradio](https://github.com/gradio-app/gradio/blob/main/client/js/README.md) 为本项目提供 gradio API 接入参考。
