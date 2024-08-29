@@ -46,7 +46,11 @@ export function apply(ctx: Context, config: Config) {
 
             lunaVits.addAdapter(new GPTSoVITS2Adapter(lunaVits.ctx))
             lunaVits.addAdapter(new VitsSimpleAPIAdapter(lunaVits.ctx))
-            lunaVits.addAdapter(new GradioAdapter(lunaVits.ctx))
+            ctx.inject(['gradio'], async () => {
+                lunaVits.addAdapter(new GradioAdapter(lunaVits.ctx))
+
+                await ctx.console.services.luna_vits_data.refresh()
+            })
 
             function getSpeaker(
                 speakerKeyMap: Awaited<

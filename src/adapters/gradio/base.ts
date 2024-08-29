@@ -4,6 +4,7 @@ import type { Client } from 'koishi-plugin-gradio-service'
 import { GradioSpeaker, VitsConfig } from '../../type'
 import { VitsAdapter } from '../base'
 import * as bertVits from './processor/bert_vits'
+import * as gptSovits1 from './processor/gpt_sovits_1'
 
 export class GradioAdapter extends VitsAdapter {
     type = 'gradio'
@@ -15,6 +16,7 @@ export class GradioAdapter extends VitsAdapter {
         super(ctx)
 
         this.addProcessor(bertVits.type, bertVits)
+        this.addProcessor(gptSovits1.type, gptSovits1)
     }
 
     async predict(
@@ -48,10 +50,10 @@ export class GradioAdapter extends VitsAdapter {
                     return res['data'] as any
                 })
 
+            let url: string
+
             if (typeof response[0] === 'string') {
                 const finalResponse = response[1]
-
-                let url: string
 
                 if (finalResponse.url) {
                     url = finalResponse.url
@@ -65,11 +67,31 @@ export class GradioAdapter extends VitsAdapter {
                     )
                     throw new Error('Invalid response format')
                 }
+            } else if (
+                typeof response[0] === 'object' &&
+                response[0].is_file === true
+            ) {
+                const finalResponse = response[0]
 
-                client.close()
-
-                return h.audio(url)
+                if (finalResponse.url) {
+                    url = finalResponse.url
+                } else if (finalResponse.path || finalResponse.name) {
+                    const filePath = finalResponse.path || finalResponse.name
+                    url = `${config.url}/file=${filePath}`
+                }
             }
+
+            if (url == null) {
+                this.ctx.logger.error(
+                    'Invalid response:',
+                    JSON.stringify(response)
+                )
+                throw new Error('Invalid response format')
+            }
+
+            client.close()
+
+            return h.audio(url)
         } catch (error) {
             this.ctx.logger.error(JSON.stringify(error))
 
@@ -104,7 +126,11 @@ export class GradioAdapter extends VitsAdapter {
 
         const processor = this.processors[config.config.type]
 
-        return processor?.getSpeakerList(config) ?? config.speakers ?? []
+        const client = await this.getGradioClient(config)
+
+        return (
+            processor?.getSpeakerList(client, config) ?? config.speakers ?? []
+        )
     }
 
     async getGradioClient(config: VitsConfig<'gradio'>) {
@@ -130,7 +156,10 @@ export class GradioAdapter extends VitsAdapter {
 
 export interface GradioProcessor {
     type: string
-    getSpeakerList: (config: VitsConfig<'gradio'>) => Promise<GradioSpeaker[]>
+    getSpeakerList: (
+        client: Client,
+        config: VitsConfig<'gradio'>
+    ) => Promise<GradioSpeaker[]>
     generatePayload: (
         input: string,
         client: Client,

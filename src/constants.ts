@@ -178,7 +178,7 @@ export class LunaVitsProvider extends DataService<string> {
 
                 return result
             })
-            .sort((a, b) => (a < b ? 1 : -1))
+            .sort((a, b) => (a[1] < b[1] ? 1 : -1))
             .map((k, index) => [k, baseSpeakId++])
             .reduce(
                 (acc, [k, v]) => {

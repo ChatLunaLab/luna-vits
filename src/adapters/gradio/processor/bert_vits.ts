@@ -1,84 +1,73 @@
-import { Client } from 'koishi-plugin-gradio-service'
+import type {
+    Client,
+    EndpointInfo,
+    JsApiData
+} from 'koishi-plugin-gradio-service'
 import { GradioSpeaker, VitsConfig } from '../../../type'
 import { VitsAdapter } from '../../base'
 import { selectProperty } from '../../../utils'
 
-export const type = 'bert-vits'
+export const type = 'bert-vits2'
 
-export async function getSpeakerList(config: VitsConfig<'gradio'>) {
-    const app = await this.getGradioClient(config)
-
+export async function getSpeakerList(
+    app: Client,
+    config: VitsConfig<'gradio'>
+) {
     const apiInfo = await app.viewApi()
 
     let fnIndex = config.config.fn_index ?? 'tts_fn'
-
     if (typeof fnIndex === 'string' && !fnIndex.startsWith('/')) {
         fnIndex = `/${fnIndex}`
     }
 
-    let fnInfo = apiInfo.named_endpoints[fnIndex]
+    let fnInfo =
+        apiInfo.named_endpoints[fnIndex] || apiInfo.unnamed_endpoints[fnIndex]
 
     if (!fnInfo) {
-        fnInfo = apiInfo.unnamed_endpoints[fnIndex]
-    }
-
-    if (!fnInfo) {
-        for (const key in apiInfo.named_endpoints) {
-            if (
-                apiInfo.named_endpoints[key].parameters.some(
-                    (p) =>
-                        p.parameter_name === 'speaker' ||
-                        (p.label.includes('选择说话人') &&
-                            p.component === 'Dropdown')
-                )
-            ) {
-                fnInfo = apiInfo.named_endpoints[key]
-                fnIndex = key
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const findEndpoint = (
+            endpoints: Record<string, EndpointInfo<JsApiData>>
+        ) => {
+            for (const key in endpoints) {
+                const endpoint = endpoints[key]
+                if (
+                    endpoint.parameters.some(
+                        (p) =>
+                            p.parameter_name === 'speaker' ||
+                            p.label.includes('选择说话人') ||
+                            p.label.includes('Speaker')
+                    ) &&
+                    !endpoint.parameters.some((p) =>
+                        p.label.includes('按句切分')
+                    )
+                ) {
+                    fnInfo = endpoint
+                    fnIndex = parseInt(key)
+                    return true
+                }
             }
+            return false
         }
-    }
 
-    if (!fnInfo) {
-        for (const key in apiInfo.unnamed_endpoints) {
-            if (
-                apiInfo.unnamed_endpoints[key].parameters.some(
-                    (p) =>
-                        p.parameter_name === 'speaker' ||
-                        p.label.includes('选择说话人') ||
-                        p.label.includes('Speaker')
-                ) &&
-                !apiInfo.unnamed_endpoints[key].parameters.some((p) =>
-                    p.label.includes('按句切分')
-                )
-            ) {
-                fnInfo = apiInfo.unnamed_endpoints[key]
-                fnIndex = parseInt(key)
-            }
-        }
+        findEndpoint(apiInfo.named_endpoints) ||
+            findEndpoint(apiInfo.unnamed_endpoints)
     }
 
     config.config.fn_index = fnIndex
 
-    const speakerComponent = fnInfo.parameters.find(
-        (p) =>
-            p.parameter_name === 'speaker' ||
-            p.label.includes('选择说话人') ||
-            p.label.includes('Speaker')
-    )
+    const getComponent = (name: string, labels: string[]) =>
+        fnInfo.parameters.find(
+            (p) =>
+                p.parameter_name === name ||
+                labels.some((label) => p.label.includes(label))
+        )
 
-    const languageComponent = fnInfo.parameters.find(
-        (p) =>
-            p.parameter_name === 'language' ||
-            p.label.includes('选择语言') ||
-            p.label.includes('Language')
-    )
+    const speakerComponent = getComponent('speaker', ['选择说话人', 'Speaker'])
+    const languageComponent = getComponent('language', ['选择语言', 'Language'])
 
     let languageType = languageComponent?.enum as string[] | undefined
 
     if (!languageType) {
-        // Match description and extract language options
-        // Option from: [('ZH', 'ZH'), ('JP', 'JP'), ('EN', 'EN'), ('auto', 'auto'), ('mix', 'mix')]
-        // => ['ZH', 'JP', 'EN', 'auto', 'mix']
         const match = languageComponent?.description?.match(
             /Option from: \[(.*?)\]/
         )
@@ -93,7 +82,7 @@ export async function getSpeakerList(config: VitsConfig<'gradio'>) {
         }
     }
 
-    if (languageType != null && languageType.length > 0) {
+    if (languageType) {
         config.config.languages = languageType
             .filter((value) => !value.includes('mix'))
             .map((value) => value.toLocaleUpperCase())
@@ -105,9 +94,7 @@ export async function getSpeakerList(config: VitsConfig<'gradio'>) {
 
     let enums = speakerComponent?.enum as string[] | undefined
 
-    if (enums === undefined) {
-        // Match description Option from: [('永雏塔菲', '永雏塔菲')]
-        // => array ['永雏塔菲']
+    if (!enums) {
         const match = speakerComponent.description.match(
             /Option from: \[(.*?)\]/
         )
@@ -187,6 +174,7 @@ export async function generatePayload(
             style_text: 'Hello!!',
             style_weight: 0
         },
+
         baseConfig,
         additionalConfig,
         payload
@@ -261,7 +249,5 @@ export async function generatePayload(
         ) {
             return null
         }
-
-        return mix[p.parameter_name]
     })
 }
