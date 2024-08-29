@@ -1,94 +1,107 @@
-- name: 'GPT-SoVITS-2'
-  type: 'GPT-SoVITS2'
+- name: "GPT-SoVITS-2"
+  type: "GPT-SoVITS2"
   enabled: false
-  url: 'http://127.0.0.1:9880'
+  url: "http://127.0.0.1:9880"
   config:
-      # 这是基础的请求参数，可以设置一些东西，比如温度等
-      # 具体参数看 api_v2.py 里的参数
-      text_split_method: cut5
-      batch_size: 1
+    # 这是基础的请求参数，可以设置一些东西，比如温度等
+    # 具体参数看 api_v2.py 里的参数
+    text_split_method: cut5
+    batch_size: 1
 
   speakers:
-      - name: '丛雨'
-        # 底模路径，不设置则不切换
-        gpt_weights: 'GPT_SoVITS/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt'
-        sovits_weights: 'SoVITS_weights_v2/Muramasa_e16_s6576.pth'
-        # 参考音频是在你那个服务器部署上的路径，不是你本地的路径！！！
-        ref_audio_path: 'audio/ムラサメ/mur001_062.ogg'
-        aux_ref_audio_paths:
-            - 'audio/ムラサメ/mur001_067.ogg'
-            - 'audio/ムラサメ/mur003_012.ogg'
-            - 'audio/ムラサメ/mur004_02.ogg'
-        prompt_text: 'ほれ、吾輩の言った通りであろう？　なのにどうして、ご主人は……'
-        prompt_lang: 'jp'
+    - name: "丛雨"
+      # 底模路径，不设置则不切换
+      gpt_weights: "GPT_SoVITS/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt"
+      sovits_weights: "SoVITS_weights_v2/Muramasa_e16_s6576.pth"
+      # 参考音频是在你那个服务器部署上的路径，不是你本地的路径！！！
+      ref_audio_path: "audio/ムラサメ/mur001_062.ogg"
+      aux_ref_audio_paths:
+        - "audio/ムラサメ/mur001_067.ogg"
+        - "audio/ムラサメ/mur003_012.ogg"
+        - "audio/ムラサメ/mur004_02.ogg"
+      prompt_text: "ほれ、吾輩の言った通りであろう？　なのにどうして、ご主人は……"
+      prompt_lang: "jp"
 
 # vits-simple-api 的配置
-- name: 'Vits-Simple-API'
-  type: 'vits-simple-api'
+- name: "Vits-Simple-API"
+  type: "vits-simple-api"
   enabled: false
-  url: 'http://127.0.0.1:23456'
+  url: "http://127.0.0.1:23456"
   config:
-      # 是否自动拉取 speaker 列表，关闭后需要手动指定 speaker，开启后和会下面的 speakers 合并拉取
-      auto_pull_speaker: true
-      # 如果需要使用 api_key 请设置
-      # api_key: '1234567890'
+    # 是否自动拉取 speaker 列表，关闭后需要手动指定 speaker，开启后和会下面的 speakers 合并拉取
+    auto_pull_speaker: true
+    # 如果需要使用 api_key 请设置
+    # api_key: '1234567890'
 
   # 可以为相同的 id 设置不同的 speaker，使用不同的配置即可 speaker 内部可以填写不同的配置和请求参数
   speakers:
-      - name: '派蒙'
-        # VITS / BERT-VITS2 / GPT-SOVITS / W2V2-VITS
-        type: VITS
-        languages: ['zh']
-        id: 0
-      - name: '派蒙2'
-        type: VITS
-        languages: ['zh']
-        id: 0
-        # 一个不同的请求参数
-        noise: 0.45
-      - name: '花火_测试'
-        type: GPT-SOVITS
-        languages: ['zh', 'ja', 'en']
-        id: 0
-        # 参考音频路径这里需要你是本地的绝对路径
-        reference_audio: 'D:/sovits/vits-simple-api/data/models/花火/参考音频/说话-可聪明的人从一开始就不会入局。你瞧，我是不是更聪明一点？.wav'
-        prompt_text: '可聪明的人从一开始就不会入局。你瞧，我是不是更聪明一点？'
-        prompt_lang: 'zh'
-      - name: '花火_测试2'
-        type: GPT-SOVITS
-        languages: ['zh', 'ja', 'en']
-        id: 0
-        # 可以使用 vits-simple-api 的预设
-        preset: 'default'
+    - name: "派蒙"
+      # VITS / BERT-VITS2 / GPT-SOVITS / W2V2-VITS
+      type: VITS
+      languages: ["zh"]
+      id: 0
+    - name: "派蒙2"
+      type: VITS
+      languages: ["zh"]
+      id: 0
+      # 一个不同的请求参数
+      noise: 0.45
+    - name: "花火_测试"
+      type: GPT-SOVITS
+      languages: ["zh", "ja", "en"]
+      id: 0
+      # 参考音频路径这里需要你是本地的绝对路径
+      reference_audio: "D:/sovits/vits-simple-api/data/models/花火/参考音频/说话-可聪明的人从一开始就不会入局。你瞧，我是不是更聪明一点？.wav"
+      prompt_text: "可聪明的人从一开始就不会入局。你瞧，我是不是更聪明一点？"
+      prompt_lang: "zh"
+    - name: "花火_测试2"
+      type: GPT-SOVITS
+      languages: ["zh", "ja", "en"]
+      id: 0
+      # 可以使用 vits-simple-api 的预设
+      preset: "default"
 
-- name: '丛雨'
-  type: 'gradio'
+- name: "丛雨"
+  type: "gradio"
   enabled: true
-  url: 'https://lumia1998-murasame.hf.space'
+  url: "https://lumia1998-murasame.hf.space"
 
   config:
-      # 目前支持 bert-vits2
-      type: 'bert-vits2'
-      # 是否自动拉取 speaker 列表，关闭后需要手动指定 speaker，开启后和会下面的 speakers 合并拉取
-      auto_pull_speaker: true
-      # 手动指定语言，注意需要区分大小写
-      # 开启自动拉取 speaker 后就不用了
-      # languages: ['ZH']
+    # 目前支持 bert-vits2
+    type: "bert-vits2"
+    # 是否自动拉取 speaker 列表，关闭后需要手动指定 speaker，开启后和会下面的 speakers 合并拉取
+    auto_pull_speaker: true
+    # 手动指定语言，注意需要区分大小写
+    # 开启自动拉取 speaker 后就不用了
+    # languages: ['ZH']
 
-- name: '塔菲'
-  type: 'gradio'
+- name: "塔菲"
+  type: "gradio"
   enabled: true
-  url: 'https://xzjosh-taffy-bert-vits2-2-3.hf.space'
+  url: "https://xzjosh-taffy-bert-vits2-2-3.hf.space"
 
   config:
-      # 目前支持 bert-vits2
-      type: 'bert-vits2'
-      auto_pull_speaker: false
-      languages: ['ZH','JP','EN','AUTO']
+    # 目前支持 bert-vits2
+    type: "bert-vits2"
+    # hf_token
+    # hf_token:
+    auto_pull_speaker: true
 
+- name: "丁真"
+  # gradio 版本各 api 都是大显神通，因此你需要看着他那边 webui 的去填写
+  type: "gradio"
+  enabled: true
+  url: "https://xzjosh-azusa-gpt-sovits.hf.space"
+
+  config:
+    type: "gpt-sovits-xzjosh"
+    # 必须打开，才能获取全部参考文本和其他信息
+    auto_pull_speaker: true
+
+  # 必须有最少一个 speaker
   speakers:
-      - name: '永雏塔菲'
-        # 需要填写 fn_index，不然还是建议自动拉取
-        fn_index: 0
-
-
+    - name: "阿梓"
+      # 参考文本不建议设置，会随机
+      # prompt_text: "这是岩羊，现在很多动物都，濒临灭绝了。"
+      # prompt_lang: "中文"
+      text_split_method: "凑五句一切"
