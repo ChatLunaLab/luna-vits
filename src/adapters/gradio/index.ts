@@ -1,8 +1,9 @@
 import { Element, h } from 'koishi'
-import { GradioSpeaker, VitsConfig } from '../type'
-import { VitsAdapter } from './base'
+
 import type { Client } from 'koishi-plugin-gradio-service'
-import { selectProperty } from '../utils'
+import { VitsConfig, GradioSpeaker } from '../../type'
+import { selectProperty } from '../../utils'
+import { VitsAdapter } from '../base'
 
 export class GradioAdapter extends VitsAdapter {
     type = 'gradio'

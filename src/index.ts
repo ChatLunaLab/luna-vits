@@ -3,12 +3,15 @@
 import { Context } from 'koishi'
 import { Config } from './config'
 import { LunaVitsService } from './service'
-import { GPTSoVITS2Adapter, VitsSimpleAPIAdapter } from './adapters'
+import {
+    GPTSoVITS2Adapter,
+    VitsSimpleAPIAdapter,
+    GradioAdapter
+} from './adapters'
 import { resolve } from 'path'
 import type {} from '@koishijs/plugin-console'
 import { LunaVitsProvider } from './constants'
 import * as eventStream from '@dingyi222666/event-stream'
-import { GradioAdapter } from './adapters/gradio'
 
 export function apply(ctx: Context, config: Config) {
     ctx.plugin(eventStream)
