@@ -3,6 +3,7 @@ import { Config } from './config'
 import Vits from '@initencounter/vits'
 import { VitsAdapter } from './adapters/base'
 import { VitsConfig } from './type'
+import type {} from '@koishijs/translator'
 
 export class LunaVitsService extends Vits {
     private _adapters: Record<string, VitsAdapter> = {}
@@ -32,7 +33,9 @@ export class LunaVitsService extends Vits {
         const speakerKeyMap =
             await this.ctx.console.services.luna_vits_data.getSpeakerKeyMap()
 
-        // TODO: auto translate
+        if (this.config.autoTranslate) {
+            input = await this.checkLanguage(input, lang)
+        }
 
         const currentConfig = speakerKeyMap[options.speaker as string]
 
@@ -53,6 +56,27 @@ export class LunaVitsService extends Vits {
                 }
             )
         )
+    }
+
+    private async checkLanguage(input: string, lang: string): Promise<string> {
+        try {
+            const franc = await importFranc()
+
+            const sourceLanguage =
+                francLanguageMapping[franc.franc(input)] ?? lang
+
+            if (sourceLanguage === lang || !this.config.autoTranslate) {
+                return input
+            }
+
+            return this.ctx.translator.translate({
+                input,
+                source: sourceLanguage.toLocaleLowerCase(),
+                target: lang.toLocaleLowerCase()
+            })
+        } catch (error) {
+            return input
+        }
     }
 
     async say(options: Vits.Result): Promise<h> {
@@ -78,4 +102,34 @@ export class LunaVitsService extends Vits {
             required: false
         }
     }
+}
+
+async function importFranc() {
+    try {
+        return await import('franc-min')
+    } catch (e) {
+        throw new Error(
+            'Please install franc-min as a dependency with, e.g. `npm install -S franc-min`'
+        )
+    }
+}
+
+const francLanguageMapping: Record<string, string> = {
+    jpn: 'jp',
+    zho: 'zh',
+    eng: 'en',
+    spa: 'es',
+    fra: 'fr',
+    deu: 'de',
+    ita: 'it',
+    por: 'pt',
+    rus: 'ru',
+    kor: 'ko',
+    ara: 'ar',
+    heb: 'he',
+    hin: 'hi',
+    tur: 'tr',
+    vie: 'vi',
+    cmn: 'zh',
+    ell: 'el'
 }

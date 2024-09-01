@@ -5,15 +5,18 @@ import { GradioSpeaker, VitsConfig } from '../../type'
 import { VitsAdapter } from '../base'
 import * as bertVits from './processor/bert_vits'
 import * as gptSovits1 from './processor/gpt_sovits_1'
+import { TTLCache } from '../../utils'
 
 export class GradioAdapter extends VitsAdapter {
     type = 'gradio'
 
-    private clients: Record<string, Client> = {}
+    private clients: TTLCache<Client>
     private processors: Record<string, GradioProcessor> = {}
 
     constructor(ctx: Context) {
         super(ctx)
+
+        this.clients = new TTLCache(ctx, 1000 * 60 * 5)
 
         this.addProcessor(bertVits.type, bertVits)
         this.addProcessor(gptSovits1.type, gptSovits1)
@@ -136,15 +139,15 @@ export class GradioAdapter extends VitsAdapter {
     async getGradioClient(config: VitsConfig<'gradio'>) {
         const url = config.url
 
-        if (this.clients[url]) {
-            return this.clients[url]
+        if (this.clients.get(url)) {
+            return this.clients.get(url)
         }
 
         const client = await this.ctx.gradio.connect(url, {
             hf_token: config.config.hf_token as `hf_${string}`
         })
 
-        this.clients[url] = client
+        this.clients.set(url, client)
 
         return client
     }

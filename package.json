@@ -34,6 +34,7 @@
     },
     "devDependencies": {
         "@koishijs/client": "^5.29.3",
+        "@koishijs/translator": "^1.1.1",
         "@typescript-eslint/eslint-plugin": "^6.21.1-alpha.1",
         "@typescript-eslint/parser": "^6.21.1-alpha.1",
         "esbuild": "^0.23.1",
@@ -45,6 +46,7 @@
         "eslint-plugin-n": "^16.6.2",
         "eslint-plugin-prettier": "^5.2.1",
         "eslint-plugin-promise": "^6.6.0",
+        "franc-min": "^6.2.0",
         "yakumo": "^1.0.0-beta.18",
         "yakumo-esbuild": "^1.0.0-beta.6",
         "yakumo-mocha": "^1.0.0-beta.2",
@@ -52,10 +54,14 @@
     },
     "peerDependencies": {
         "@koishijs/plugin-console": "^5.29.3",
+        "franc-min": "^6.2.0",
         "koishi": "^4.17.9",
         "koishi-plugin-gradio-service": "^0.0.1"
     },
     "peerDependenciesMeta": {
+        "franc-min": {
+            "optional": true
+        },
         "koishi-plugin-gradio-service": {
             "optional": true
         }
@@ -73,7 +79,7 @@
     },
     "koishi": {
         "description": {
-            "zh": "多平台 vits 聚合插件，支持 `GPT-SoVITS-2` | `vits-simple-api`，以及 gradio 版本的 `bert-vits2`,`GPT-SoVITS-1`"
+            "zh": "多平台 vits 聚合插件，自动翻译支持，可接入 `GPT-SoVITS-2` | `vits-simple-api`，gradio 版本 `bert-vits2`,`GPT-SoVITS-1` "
         },
         "service": {
             "implements": [
