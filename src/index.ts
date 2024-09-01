@@ -74,6 +74,29 @@ export function apply(ctx: Context, config: Config) {
                 .option('speaker', '-s [speaker:string] 语音合成的讲者', {
                     fallback: config.defaultSpeaker
                 })
+                .option(
+                    'sdp_ratio',
+                    '-sr [sdp_ratio:nubmer] 语音合成的SDP/DP混合比'
+                )
+                .option('noise', '-n [noise:number] 语音合成的感情强度')
+                .option('noisew', '-nw [noisew:number] 语音合成的音素长度')
+                .option('length', '-l [length:number] 语音合成语速')
+                .option(
+                    'weight',
+                    '-w [weight:number] 主文本和辅助文本的混合比率'
+                )
+                .option(
+                    'temperature',
+                    '-t [temperature:number] 合成的温度（GPT-SOVITS-ONLY）'
+                )
+                .option(
+                    'text_split_method',
+                    '-ts [text_split_method:string] 语音合成的文本分割方法（GPT-SOVITS-ONLY）'
+                )
+                .option(
+                    'speed_factor',
+                    '-sf [speed_factor:number] 语音合成的语速（GPT-SOVITS-ONLY）'
+                )
                 .action(async ({ session, options }, text) => {
                     if (!text) {
                         await session.execute('lunavits -h')

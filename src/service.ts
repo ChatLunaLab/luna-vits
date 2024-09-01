@@ -23,12 +23,6 @@ export class LunaVitsService extends Vits {
             return h.text('输入的字符串长度不能超过 ' + this.config.maxLength)
         }
 
-        // lang:
-        // with regex
-        // get last _
-        // xx_xx_xxx -> xxx
-        // xx_xxx -> xxx
-
         let lang = (options.speaker as string)?.split('_')?.pop()
 
         if (!lang) {
