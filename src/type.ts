@@ -6,6 +6,7 @@ export interface VitsConfig<
 > {
     name?: string
     type: T
+    headers?: Record<string, string>
     url: string
     enabled?: boolean
     config: this extends { type: infer T }

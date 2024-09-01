@@ -5,7 +5,7 @@ import { GradioSpeaker, VitsConfig } from '../../type'
 import { VitsAdapter } from '../base'
 import * as bertVits from './processor/bert_vits'
 import * as gptSovits1 from './processor/gpt_sovits_1'
-import { TTLCache } from '../../utils'
+import { getAudioFileExtension, TTLCache } from '../../utils'
 
 export class GradioAdapter extends VitsAdapter {
     type = 'gradio'
@@ -94,9 +94,18 @@ export class GradioAdapter extends VitsAdapter {
                 throw new Error('Invalid response format')
             }
 
+            if (client.jwt != null) {
+                url = url + '?__sign=' + client.jwt
+            }
+
+            const audioBuffer = await this.ctx.http.get(url, {
+                responseType: 'arraybuffer',
+                headers: this._buildHeaders(config)
+            })
+
             client.close()
 
-            return h.audio(url)
+            return h.audio(audioBuffer, getAudioFileExtension(url))
         } catch (error) {
             this.ctx.logger.error(JSON.stringify(error))
 
@@ -152,6 +161,16 @@ export class GradioAdapter extends VitsAdapter {
         this.clients.set(url, client)
 
         return client
+    }
+
+    private _buildHeaders(config: VitsConfig<'gradio'>) {
+        if (!config.config.hf_token) {
+            return {}
+        }
+
+        return {
+            Authorization: `Bearer ${config.config.hf_token}`
+        }
     }
 
     addProcessor(type: string, processor: GradioProcessor) {

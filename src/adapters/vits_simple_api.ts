@@ -60,7 +60,7 @@ export class VitsSimpleAPIAdapter extends VitsAdapter {
         const payload: [Record<string, any>, string, Record<string, string>] = [
             {},
             config.url,
-            {}
+            Object.assign({}, config.headers ?? {})
         ]
         if (speaker.type === 'VITS') {
             payload[0] = this._generateVitsPayload(input, speaker, options)
@@ -245,9 +245,12 @@ export class VitsSimpleAPIAdapter extends VitsAdapter {
             const speakerMap = (await this.ctx.http.get(
                 `${config.url}/voice/speakers`,
                 {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    headers: Object.assign(
+                        {
+                            'Content-Type': 'application/json'
+                        },
+                        config.headers ?? {}
+                    )
                 }
             )) as Record<string, Speakers[]>
 

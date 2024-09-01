@@ -163,9 +163,9 @@ export async function generatePayload(
 
     const mix = Object.assign(
         {
-            sdp_ratio: 0.5,
-            noise_scale: 0.5,
-            noise_scale_w: 0.9,
+            sdp_ratio: 0.3,
+            noise_scale: 0.4,
+            noise_scale_w: 0.8,
             length_scale: 1,
             language: 'ZH',
             emotion: 'Happy',

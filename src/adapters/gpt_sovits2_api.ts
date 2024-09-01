@@ -46,7 +46,8 @@ export class GPTSoVITS2Adapter extends VitsAdapter {
                 `${config.url}/tts`,
                 payload,
                 {
-                    responseType: 'arraybuffer'
+                    responseType: 'arraybuffer',
+                    headers: Object.assign({}, config.headers ?? {})
                 }
             )
 
