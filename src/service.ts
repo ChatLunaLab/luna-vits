@@ -4,6 +4,7 @@ import Vits from '@initencounter/vits'
 import { VitsAdapter } from './adapters/base'
 import { VitsConfig } from './type'
 import type {} from '@koishijs/translator'
+import { runWithRetry } from './utils'
 
 export class LunaVitsService extends Vits {
     private _adapters: Record<string, VitsAdapter> = {}
@@ -34,8 +35,11 @@ export class LunaVitsService extends Vits {
             await this.ctx.console.services.luna_vits_data.getSpeakerKeyMap()
 
         if (this.config.autoTranslate) {
+            this.ctx.logger.debug('input sentence (origin) %s', input)
             input = await this.checkLanguage(input, lang)
         }
+
+        this.ctx.logger.debug('input sentence %s', input)
 
         const currentConfig = speakerKeyMap[options.speaker as string]
 
@@ -43,18 +47,24 @@ export class LunaVitsService extends Vits {
             throw new Error('Speaker not found')
         }
 
-        return this._adapters[currentConfig[0].type].predict(
-            input,
-            currentConfig[0],
-            Object.assign(
-                {
-                    language: lang
-                },
-                options,
-                {
-                    speaker: currentConfig[1]
-                }
-            )
+        return runWithRetry(
+            async () => {
+                return this._adapters[currentConfig[0].type].predict(
+                    input,
+                    currentConfig[0],
+                    Object.assign(
+                        {
+                            language: lang
+                        },
+                        options,
+                        {
+                            speaker: currentConfig[1]
+                        }
+                    )
+                )
+            },
+            3,
+            5000
         )
     }
 

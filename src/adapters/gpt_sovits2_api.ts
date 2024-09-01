@@ -39,6 +39,8 @@ export class GPTSoVITS2Adapter extends VitsAdapter {
             options
         )
 
+        this.ctx.logger.debug('payload, %s', JSON.stringify(payload))
+
         try {
             const response = await this.ctx.http.post(
                 `${config.url}/tts`,

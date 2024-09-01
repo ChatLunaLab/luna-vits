@@ -38,6 +38,8 @@ export class GradioAdapter extends VitsAdapter {
             options
         )
 
+        this.ctx.logger.debug('payload %s', JSON.stringify(payload))
+
         const fnIndex = currentSpeaker.fn_index ?? config.config.fn_index
 
         currentSpeaker.fn_index = fnIndex

@@ -23,6 +23,8 @@ export class VitsSimpleAPIAdapter extends VitsAdapter {
             options
         )
 
+        this.ctx.logger.debug('payload, %s', JSON.stringify(payload))
+
         // pack payload
         const formData = new FormData()
 

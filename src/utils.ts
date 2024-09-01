@@ -66,6 +66,21 @@ export class PromiseLock {
         this._lock = false
     }
 }
+export async function runWithRetry<T>(
+    func: () => Promise<T>,
+    retry: number,
+    interval: number
+): Promise<T> {
+    while (retry > 0) {
+        try {
+            return await func()
+        } catch (error) {
+            if (--retry === 0) throw error
+            await new Promise((resolve) => setTimeout(resolve, interval))
+        }
+    }
+    throw new Error('Retry count exceeded')
+}
 
 export class TTLCache<T> {
     private _cache: Map<string, CacheItem<T>> = new Map()
