@@ -11,11 +11,8 @@ import {
 import { resolve } from 'path'
 import type {} from '@koishijs/plugin-console'
 import { LunaVitsProvider } from './constants'
-import * as eventStream from '@dingyi222666/event-stream'
 
 export function apply(ctx: Context, config: Config) {
-    ctx.plugin(eventStream)
-
     ctx.inject(['console'], (ctx) => {
         ctx.console.addEntry({
             dev: resolve(__dirname, '../client/index.ts'),
@@ -23,7 +20,7 @@ export function apply(ctx: Context, config: Config) {
         })
     })
 
-    ctx.plugin(LunaVitsService)
+    ctx.plugin(LunaVitsService, config)
     ctx.plugin(LunaVitsProvider)
 
     ctx.inject(
