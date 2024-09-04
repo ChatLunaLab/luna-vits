@@ -5,7 +5,7 @@ import type {
 } from 'koishi-plugin-gradio-service'
 import { GradioSpeaker, VitsConfig } from '../../../type'
 import { VitsAdapter } from '../../base'
-import { selectProperty } from '../../../utils'
+import { isNumeric, selectProperty } from '../../../utils'
 
 export const type = 'bert-vits2'
 
@@ -42,7 +42,8 @@ export async function getSpeakerList(
                     )
                 ) {
                     fnInfo = endpoint
-                    fnIndex = parseInt(key)
+                    fnIndex = isNumeric(key) ? parseInt(key) : key
+
                     return true
                 }
             }

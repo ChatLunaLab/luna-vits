@@ -8,8 +8,8 @@ import { GradioSpeaker, VitsConfig } from '../../../type'
 import { VitsAdapter } from '../../base'
 import { isNumeric, selectProperty } from '../../../utils'
 
-// xzjosh webui version
-export const type = 'gpt-sovits-xzjosh'
+// ??? webui version
+export const type = 'gpt-sovits2-v1'
 
 export async function getSpeakerList(
     app: Client,
@@ -87,6 +87,7 @@ export async function getSpeakerList(
 
     const referenceAudioInfo = findComponent(fnInfo, ['选择参考音频'])
     const languageInfo = findComponent(fnInfo, ['合成的语种'])
+    const referenceAudioLanguage = findComponent(fnInfo, ['参考音频的语种'])
 
     if (!referenceAudioInfo) {
         throw new Error('No reference audio parameter found')
@@ -110,9 +111,14 @@ export async function getSpeakerList(
         languageComponent.props['choices'] as [string, string][]
     ).map(([value]) => value)
 
-    config.config['referenceAudio'] = referenceAudioChoices.map(
-        ([, value]) => value
-    )
+    config.config['referenceAudio'] =
+        referenceAudioInfo.componentInfo.enum ??
+        referenceAudioChoices.map(([, value]) => value)
+
+    config.config['referenceAudioLanguage'] =
+        languagesMap[
+            referenceAudioLanguage.componentInfo.parameter_default ?? '中文'
+        ]
 
     config.config['languages'] = languageChoices
         .map((value) => languagesMap[value])
@@ -135,30 +141,41 @@ export async function generatePayload(
         text: input,
         language: options.language,
         prompt_text: randomPromptText(config),
-        // ?，不是中文在说
-        prompt_lang: 'zh',
-        text_split_method: '凑五句一切'
+        prompt_lang: config.config['referenceAudioLanguage'] as string,
+        text_split_method: '按标点符号切',
+        speed: 1,
+        temperature: 1,
+        top_p: 0.9,
+        top_k: 15,
+        if_freeze: false
     }
 
     const baseConfig = selectProperty(speaker, [
         'text_split_method',
         'language',
         'prompt_text',
-        'prompt_lang'
+        'prompt_lang',
+        'temperature',
+        'top_p',
+        'speed',
+        'top_k'
     ])
 
     const additionalConfig = selectProperty(options, [
         'text_split_method',
         'language',
         'prompt_text',
-        'prompt_lang'
+        'prompt_lang',
+        'temperature',
+        'top_p',
+        'speed',
+        'top_k'
     ])
 
     const mix = Object.assign(
         {
             prompt_text: randomPromptText(config),
-            // ?，不是中文在说
-            prompt_lang: 'zh'
+            prompt_lang: config.config['referenceAudioLanguage'] as string
         },
         baseConfig,
         additionalConfig,
@@ -180,7 +197,7 @@ export async function generatePayload(
             return languagesKeyMap[mix.language.toLocaleLowerCase()]
         }
 
-        if (p.label.includes('自动切分')) {
+        if (p.label.includes('怎么切')) {
             return mix.text_split_method
         }
 
@@ -199,6 +216,26 @@ export async function generatePayload(
                 languagesKeyMap[mix.prompt_lang.toLocaleLowerCase()] ??
                 mix.prompt_lang
             )
+        }
+
+        if (p.label.includes('top_k')) {
+            return mix.top_k
+        }
+
+        if (p.label.includes('top_p')) {
+            return mix.top_p
+        }
+
+        if (p.label.includes('temperature')) {
+            return mix.temperature
+        }
+
+        if (p.label.includes('语速')) {
+            return mix.speed
+        }
+
+        if (p.label.includes('是否直接对上次合成结果调整语速和音色')) {
+            return mix.if_freeze
         }
     })
 }

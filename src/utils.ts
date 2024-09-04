@@ -142,3 +142,23 @@ export function getAudioFileExtension(filePath: string) {
             return 'audio/wav'
     }
 }
+
+export function getSpeaker(
+    ctx: Context,
+    speakerKeyMap: Awaited<
+        ReturnType<typeof ctx.console.services.luna_vits_data.getSpeakerKeyMap>
+    >,
+    speaker: string
+) {
+    for (const key of [speaker, speaker + '_AUTO', speaker + '_ZH']) {
+        if (speakerKeyMap[key]) {
+            return [speakerKeyMap[key], key]
+        }
+    }
+
+    return [null, null]
+}
+
+export function isNumeric(str: string) {
+    return !isNaN(parseFloat(str))
+}

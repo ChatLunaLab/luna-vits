@@ -35,7 +35,11 @@ export class LunaVitsService extends Vits {
             await this.ctx.console.services.luna_vits_data.getSpeakerKeyMap()
 
         if (this.config.autoTranslate) {
-            this.ctx.logger.debug('input sentence (origin) %s', input)
+            this.ctx.logger.debug(
+                'input sentence (origin) %s, lang: %s',
+                input,
+                lang
+            )
             input = await this.checkLanguage(input, lang)
         }
 
@@ -71,6 +75,7 @@ export class LunaVitsService extends Vits {
     private async checkLanguage(input: string, lang: string): Promise<string> {
         try {
             const franc = await importFranc()
+            lang = lang.toLocaleLowerCase()
 
             const sourceLanguage =
                 francLanguageMapping[franc.franc(input)] ?? lang
@@ -82,7 +87,7 @@ export class LunaVitsService extends Vits {
             return this.ctx.translator.translate({
                 input,
                 source: sourceLanguage.toLocaleLowerCase(),
-                target: lang.toLocaleLowerCase()
+                target: lang
             })
         } catch (error) {
             return input

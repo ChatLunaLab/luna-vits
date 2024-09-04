@@ -130,6 +130,11 @@ export class GPTSoVITS2Adapter extends VitsAdapter {
             }
         ) as GPTSoVITS2Request
 
+        if (base['speed']) {
+            base['speed_factor'] = base['speed']
+            delete base['speed']
+        }
+
         base.prompt_lang = mappingLanguageToGPTSoVits(base.prompt_lang)
         base.text_lang = mappingLanguageToGPTSoVits(base.text_lang)
         return base

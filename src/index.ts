@@ -11,6 +11,7 @@ import {
 import { resolve } from 'path'
 import type {} from '@koishijs/plugin-console'
 import { LunaVitsProvider } from './constants'
+import { getSpeaker } from './utils'
 
 export function apply(ctx: Context, config: Config) {
     ctx.inject(['console'], (ctx) => {
@@ -43,32 +44,12 @@ export function apply(ctx: Context, config: Config) {
 
             lunaVits.addAdapter(new GPTSoVITS2Adapter(lunaVits.ctx))
             lunaVits.addAdapter(new VitsSimpleAPIAdapter(lunaVits.ctx))
+
             ctx.inject(['gradio'], async () => {
                 lunaVits.addAdapter(new GradioAdapter(lunaVits.ctx))
 
                 await ctx.console.services.luna_vits_data.refresh()
             })
-
-            function getSpeaker(
-                speakerKeyMap: Awaited<
-                    ReturnType<
-                        typeof ctx.console.services.luna_vits_data.getSpeakerKeyMap
-                    >
-                >,
-                speaker: string
-            ) {
-                for (const key of [
-                    speaker,
-                    speaker + '_AUTO',
-                    speaker + '_ZH'
-                ]) {
-                    if (speakerKeyMap[key]) {
-                        return [speakerKeyMap[key], key]
-                    }
-                }
-
-                return [null, null]
-            }
 
             ctx.command('lunavits <text:text>', 'lunavits 语音合成')
                 .option('speaker', '-s [speaker:string] 语音合成的讲者', {
@@ -94,8 +75,8 @@ export function apply(ctx: Context, config: Config) {
                     '-ts [text_split_method:string] 语音合成的文本分割方法（GPT-SOVITS-ONLY）'
                 )
                 .option(
-                    'speed_factor',
-                    '-sf [speed_factor:number] 语音合成的语速（GPT-SOVITS-ONLY）'
+                    'speed',
+                    '-sp [speed:number] 语音合成的语速（GPT-SOVITS-ONLY）'
                 )
                 .action(async ({ session, options }, text) => {
                     if (!text) {
@@ -107,6 +88,7 @@ export function apply(ctx: Context, config: Config) {
                         await ctx.console.services.luna_vits_data.getSpeakerKeyMap()
 
                     const [speakerConfig, finalSpeaker] = getSpeaker(
+                        ctx,
                         speakerKeyMap,
                         options.speaker ?? config.defaultSpeaker
                     )

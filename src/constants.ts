@@ -99,23 +99,21 @@ export class LunaVitsProvider extends DataService<string> {
 
         this.abortController = new AbortController()
 
-        let debounceTimeout: NodeJS.Timeout | null = null
+        const debounceFn = this.ctx.debounce(async () => {
+            this.ctx.logger.info('Configuration changed, refreshing')
+            await this.refresh()
+            this.ctx.logger.info(
+                `Successfully loaded ${Object.keys(this.speakerKeyIdMap).length} speakers`
+            )
+        }, 300) // Adjust the debounce delay as needed
+
         watch(
             path.resolve('data/luna-vits/config.yml'),
             {
                 signal: this.abortController.signal
             },
             async (event, filename) => {
-                if (debounceTimeout) {
-                    clearTimeout(debounceTimeout)
-                }
-                debounceTimeout = setTimeout(async () => {
-                    this.ctx.logger.info('config changed, refreshing')
-                    await this.refresh()
-                    this.ctx.logger.info(
-                        `Successfully loaded ${Object.keys(this.speakerKeyIdMap).length} speakers`
-                    )
-                }, 300) // Adjust the debounce delay as needed
+                await debounceFn()
             }
         )
     }

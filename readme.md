@@ -2,7 +2,7 @@
 
 # koishi-plugin-luna-vits
 
-_多平台 vits 聚合插件，目前支持 `GPT-SoVITS-2` 、`vits-simple-api` 和小部分 `gradio` webui, 其他支持仍在更新...._
+_多平台 vits 聚合插件，目前支持 `GPT-SoVITS-2` 、`vits-simple-api` 、`fish-audio` 和小部分 `gradio` webui,_
 
 ## [![npm](https://img.shields.io/npm/v/koishi-plugin-luna-vits)](https://www.npmjs.com/package/koishi-plugin-luna-vits) [![npm](https://img.shields.io/npm/dm/koishi-plugin-luna-vits)](https://www.npmjs.com/package/koishi-plugin-luna-vits) ![node version](https://img.shields.io/badge/node-%3E=18-green) ![github top language](https://img.shields.io/github/languages/top/ChatLunaLab/chatluna-character?logo=github)
 

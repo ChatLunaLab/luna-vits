@@ -5,6 +5,7 @@ import { GradioSpeaker, VitsConfig } from '../../type'
 import { VitsAdapter } from '../base'
 import * as bertVits from './processor/bert_vits'
 import * as gptSovits1 from './processor/gpt_sovits_1'
+import * as gptSovits2Fixed1 from './processor/gpt_sovits_2_fixed1'
 import { getAudioFileExtension, TTLCache } from '../../utils'
 
 export class GradioAdapter extends VitsAdapter {
@@ -20,6 +21,7 @@ export class GradioAdapter extends VitsAdapter {
 
         this.addProcessor(bertVits.type, bertVits)
         this.addProcessor(gptSovits1.type, gptSovits1)
+        this.addProcessor(gptSovits2Fixed1.type, gptSovits2Fixed1)
     }
 
     async predict(
@@ -55,35 +57,22 @@ export class GradioAdapter extends VitsAdapter {
                     return res['data'] as any
                 })
 
-            let url: string
+            let url: string | undefined
 
-            if (typeof response[0] === 'string') {
-                const finalResponse = response[1]
+            const finalResponse =
+                typeof response[0] === 'string' ? response[1] : response[0]
 
-                if (finalResponse.url) {
-                    url = finalResponse.url
-                } else if (finalResponse.path || finalResponse.name) {
-                    const filePath = finalResponse.path || finalResponse.name
-                    url = `${config.url}/file=${filePath}`
-                } else {
-                    this.ctx.logger.error(
-                        'Invalid response:',
-                        JSON.stringify(finalResponse)
-                    )
-                    throw new Error('Invalid response format')
-                }
-            } else if (
-                typeof response[0] === 'object' &&
-                response[0].is_file === true
-            ) {
-                const finalResponse = response[0]
-
-                if (finalResponse.url) {
-                    url = finalResponse.url
-                } else if (finalResponse.path || finalResponse.name) {
-                    const filePath = finalResponse.path || finalResponse.name
-                    url = `${config.url}/file=${filePath}`
-                }
+            if (finalResponse.url) {
+                url = finalResponse.url
+            } else if (finalResponse.path || finalResponse.name) {
+                const filePath = finalResponse.path || finalResponse.name
+                url = `${config.url}/file=${filePath}`
+            } else {
+                this.ctx.logger.error(
+                    'Invalid response:',
+                    JSON.stringify(finalResponse)
+                )
+                throw new Error('Invalid response format')
             }
 
             if (url == null) {
