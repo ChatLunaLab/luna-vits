@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-luna-vits",
   "description": "Multi-platform vits aggregation plugin",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "types": "lib/index.d.ts",
@@ -56,7 +56,7 @@
     "@koishijs/plugin-console": "^5.29.3",
     "franc-min": "^6.2.0",
     "koishi": "^4.17.9",
-    "koishi-plugin-gradio-service": "^0.0.7"
+    "koishi-plugin-gradio-service": "^0.0.8"
   },
   "peerDependenciesMeta": {
     "franc-min": {
@@ -79,7 +79,7 @@
   },
   "koishi": {
     "description": {
-      "zh": "多平台 vits 聚合插件，自动翻译，可接入 `GPT-SoVITS-2` | `vits-simple-api` | `fish-audio`，以及部分 gradio webui "
+      "zh": "多平台 vits 聚合插件，自动翻译，可接入 `GPT-SoVITS-2` | `vits-simple-api` | `fish-audio`，以及部分 gradio webui"
     },
     "service": {
       "implements": [
