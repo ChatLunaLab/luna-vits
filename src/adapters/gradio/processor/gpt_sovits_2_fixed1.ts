@@ -249,8 +249,8 @@ function randomPromptText(config: VitsConfig<'gradio'>) {
 const languagesMap = {
     中文: 'zh',
     英文: 'en',
-    日文: 'ja',
     韩文: 'ko',
+    日英混合: 'ja',
     多语种混合: 'auto'
 }
 

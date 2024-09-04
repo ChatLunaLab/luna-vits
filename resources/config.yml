@@ -1,3 +1,6 @@
+# 配置文件
+# 为一个数组，你可以在里面放置很多个 vits 接口。
+
 - name: "GPT-SoVITS-2"
   type: "GPT-SoVITS2"
   enabled: false
@@ -105,3 +108,27 @@
       # prompt_text: "这是岩羊，现在很多动物都，濒临灭绝了。"
       # prompt_lang: "中文"
       text_split_method: "凑五句一切"
+
+- name: 'fish-audio'
+  type: 'fish-audio'
+  enabled: false
+
+  config:
+    # 去 https://fish.audio/zh-CN/m/ 获取 api key 吧
+    api_key: '1234567890'
+
+  speakers:
+    - name: '丁真'
+      reference_id: '54a5170264694bfc8e9ad98df7bd89c3'
+      # 模型使用的语言，不指定语言则自动拉取
+      language: 'zh'
+      # 必须打开，才能获取全部模型语言和其他信息，否则将直接使用 auto
+      auto_pull_speaker: true
+
+    - name: '曼波'
+      # https://fish.audio/zh-CN/m/0eb38bc974e1459facca38b359e13511/
+      # m 后面的就是 reference_id
+      reference_id: '0eb38bc974e1459facca38b359e13511'
+
+    - name: "派蒙"
+      reference_id: 'eacc56f8ab48443fa84421c547d3b60e'

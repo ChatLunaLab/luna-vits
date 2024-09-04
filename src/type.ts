@@ -1,8 +1,9 @@
 export interface VitsConfig<
-    T extends 'GPT-SoVITS2' | 'vits-simple-api' | 'gradio' =
+    T extends 'GPT-SoVITS2' | 'vits-simple-api' | 'gradio' | 'fish-audio' =
         | 'GPT-SoVITS2'
         | 'vits-simple-api'
         | 'gradio'
+        | 'fish-audio'
 > {
     name?: string
     type: T
@@ -14,14 +15,18 @@ export interface VitsConfig<
             ? GPTSoVITS2Config
             : T extends 'vits-simple-api'
               ? VitsSimpleApiConfig
-              : GradioConfig
+              : T extends 'fish-audio'
+                ? FishAudioConfig
+                : GradioConfig
         : GradioConfig
     speakers: (this extends { type: infer T }
         ? T extends 'GPT-SoVITS2'
             ? GPTSoVITS2Speaker
             : T extends 'vits-simple-api'
               ? VitsSimpleApiSpeaker
-              : GradioSpeaker
+              : T extends 'fish-audio'
+                ? FishAudioSpeaker
+                : GradioSpeaker
         : BaseSpeaker)[]
 }
 
@@ -29,6 +34,10 @@ export type Speaker = VitsConfig['speakers'][number]
 
 export interface VitsSimpleApiConfig {
     auto_pull_speaker?: boolean
+    api_key?: string
+}
+
+export interface FishAudioConfig {
     api_key?: string
 }
 
@@ -71,12 +80,13 @@ export interface VitsSimpleApiSpeaker
     format?: string
 }
 
-export interface BaseSpeaker {}
+export interface BaseSpeaker {
+    name: string
+}
 
 export interface GradioSpeaker
     extends BaseSpeaker,
         Record<string, string | number | boolean | string[]> {
-    name: string
     fn_index: string | number
 }
 
@@ -109,3 +119,20 @@ export interface GradioConfig
     languages?: string[]
     auto_pull_speaker?: boolean
 }
+
+export interface FishAudioSpeaker
+    extends BaseSpeaker,
+        Omit<FishAudioRequest, 'text'> {}
+
+export interface FishAudioRequest {
+    text: string
+    chunk_length?: number // Annotated[int, conint(ge=100, le=300, strict=True)] = 200
+    format?: 'wav' | 'pcm' | 'mp3'
+    mp3_bitrate?: 64 | 128 | 192
+    languages?: string[]
+    reference_id?: string | null
+    normalize?: boolean
+    latency?: 'normal' | 'balanced'
+}
+
+// ... existing code ...

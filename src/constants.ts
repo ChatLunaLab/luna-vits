@@ -1,6 +1,7 @@
 import path from 'path'
 import fs, { watch } from 'fs'
 import {
+    FishAudioSpeaker,
     GradioConfig,
     GradioSpeaker,
     Speaker,
@@ -150,6 +151,20 @@ export class LunaVitsProvider extends DataService<string> {
             }
         } else if (config.type === 'vits-simple-api') {
             speaker = speaker as VitsSimpleApiSpeaker
+
+            const languages = speaker.languages
+            if (languages) {
+                for (const language of languages) {
+                    result.push([
+                        config,
+                        `${speaker.name}_${language.toUpperCase()}`,
+                        speaker
+                    ])
+                }
+            }
+            result.push([config, `${speaker.name}_AUTO`, speaker])
+        } else if (config.type === 'fish-audio') {
+            speaker = speaker as FishAudioSpeaker
 
             const languages = speaker.languages
             if (languages) {

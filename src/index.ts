@@ -12,6 +12,7 @@ import { resolve } from 'path'
 import type {} from '@koishijs/plugin-console'
 import { LunaVitsProvider } from './constants'
 import { getSpeaker } from './utils'
+import { FishAudioAdapter } from './adapters/fish_audio'
 
 export function apply(ctx: Context, config: Config) {
     ctx.inject(['console'], (ctx) => {
@@ -44,6 +45,7 @@ export function apply(ctx: Context, config: Config) {
 
             lunaVits.addAdapter(new GPTSoVITS2Adapter(lunaVits.ctx))
             lunaVits.addAdapter(new VitsSimpleAPIAdapter(lunaVits.ctx))
+            lunaVits.addAdapter(new FishAudioAdapter(lunaVits.ctx))
 
             ctx.inject(['gradio'], async () => {
                 lunaVits.addAdapter(new GradioAdapter(lunaVits.ctx))
