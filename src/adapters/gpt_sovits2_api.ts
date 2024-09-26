@@ -50,7 +50,6 @@ export class GPTSoVITS2Adapter extends VitsAdapter {
                     headers: Object.assign({}, config.headers ?? {})
                 }
             )
-
             return h.audio(response, payload.media_type ?? 'wav')
         } catch (e) {
             this.ctx.logger.error(e.response)
