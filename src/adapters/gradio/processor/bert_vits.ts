@@ -188,7 +188,11 @@ export async function generatePayload(
         apiInfo.named_endpoints[speaker.fn_index]
 
     return apiData.parameters.map((p) => {
-        if (p.parameter_name === 'text' || p.label === '输入文本内容') {
+        if (
+            p.parameter_name === 'text' ||
+            p.label === '输入文本内容' ||
+            p.label.toLocaleLowerCase() === 'text'
+        ) {
             return mix.text
         }
 
@@ -200,23 +204,44 @@ export async function generatePayload(
             return mix.speaker
         }
 
-        if (p.parameter_name === 'sdp_ratio' || p.label === 'SDP Ratio') {
+        if (
+            p.parameter_name === 'sdp_ratio' ||
+            p.label === 'SDP Ratio' ||
+            p.label.includes('DP混合比')
+        ) {
             return mix.sdp_ratio
         }
 
-        if (p.parameter_name === 'noise' || p.label === 'Noise') {
+        if (
+            p.parameter_name === 'noise' ||
+            p.label === 'Noise' ||
+            p.label.includes('感情')
+        ) {
             return mix.noise ?? mix.noise_scale
         }
 
-        if (p.parameter_name === 'noise_scale' || p.label === 'Noise_W') {
+        if (
+            p.parameter_name === 'noise_scale' ||
+            p.label === 'Noise_W' ||
+            p.label.includes('音素长度')
+        ) {
             return mix.noise_w ?? mix.noise_scale_w
         }
 
-        if (p.parameter_name === 'length' || p.label === 'Length') {
+        if (
+            p.parameter_name === 'length' ||
+            p.label === 'Length' ||
+            p.parameter_name === 'length_scale' ||
+            p.label.includes('生成长度')
+        ) {
             return mix.length ?? mix.length_scale
         }
 
-        if (p.parameter_name === 'language' || p.label === 'Language') {
+        if (
+            p.parameter_name === 'language' ||
+            p.label === 'Language' ||
+            p.label.includes('选择语言')
+        ) {
             return mix.language
         }
 
