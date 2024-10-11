@@ -232,7 +232,8 @@ export async function generatePayload(
             p.parameter_name === 'length' ||
             p.label === 'Length' ||
             p.parameter_name === 'length_scale' ||
-            p.label.includes('语速')
+            p.label.includes('语速') ||
+            p.label.includes('生成长度')
         ) {
             return mix.length ?? mix.length_scale
         }
