@@ -12,7 +12,6 @@ import type {} from '../lib/constants'
 const localPackage = inject('manager.settings.local') as ComputedRef<Package>
 
 const show = computed(() => {
-    console.log(localPackage.value.name)
     return localPackage.value.name === 'koishi-plugin-luna-vits'
 })
 
