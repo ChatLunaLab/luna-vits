@@ -9,13 +9,13 @@ import { computed, ComputedRef, inject } from 'vue'
 import { store } from '@koishijs/client'
 import type {} from '../lib/constants'
 
-const localPackage = inject('manager.settings.local') as ComputedRef<Package>
+type Package = {
+    name: string
+}
+
+const localPackage = inject('manager.settings.local') as ComputedRef<Package | null>
 
 const show = computed(() => {
     return localPackage.value.name === 'koishi-plugin-luna-vits'
 })
-
-type Package = {
-    name: string
-}
 </script>
