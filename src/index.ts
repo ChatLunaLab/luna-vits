@@ -107,7 +107,8 @@ export function apply(ctx: Context, config: Config) {
                         text,
                         Object.assign(options, {
                             speaker: finalSpeaker
-                        })
+                        }),
+                        session
                     )
                 })
 

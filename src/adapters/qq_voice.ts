@@ -1,5 +1,5 @@
 import { VitsAdapter } from './base'
-import { Context, h, Session } from 'koishi'
+import { Context, h, Session, sleep } from 'koishi'
 import type { OneBotBot } from 'koishi-plugin-adapter-onebot'
 import { QQVoiceSpeaker, VitsConfig } from '../type'
 
@@ -14,15 +14,18 @@ export class QQVoiceAdapter extends VitsAdapter {
 
     async predict(
         input: string,
-        config: VitsConfig,
+        _: VitsConfig,
         options: VitsAdapter.Config,
         session: Session
     ): Promise<h> {
+        if (session == null) {
+            return h.text('请提供 seession 对象。')
+        }
         if (session.platform !== 'onebot' && session.onebot == null) {
             return h.text('AI 声聊仅支持 OneBot 协议。')
         }
 
-        if (!session.isDirect) {
+        if (session.isDirect) {
             return h.text('AI 声聊仅支持在群聊中使用。')
         }
 
@@ -34,8 +37,8 @@ export class QQVoiceAdapter extends VitsAdapter {
 
         const bot = session.onebot!
 
-        const voiceUrl = await bot
-            ._request('get_ai_voice', {
+        await bot
+            ._request('send_group_ai_record', {
                 group_id: session.guildId!,
                 character: speaker.characterId,
                 text: input
@@ -44,7 +47,7 @@ export class QQVoiceAdapter extends VitsAdapter {
                 return res.data as string
             })
 
-        return h.audio(voiceUrl)
+        return h.text('')
     }
 
     async getSpeakerList(config: VitsConfig<'qq-voice'>) {
@@ -63,10 +66,30 @@ export class QQVoiceAdapter extends VitsAdapter {
 
         // random group
 
-        const groupId = await bot.getGuildList().then((guilds) => {
-            const data = guilds.data
-            return data[Math.floor(Math.random() * data.length)].id
-        })
+        let groupId: string
+        let errorCount = 0
+
+        while (!groupId && errorCount < 5) {
+            try {
+                groupId = await bot.getGuildList().then((guilds) => {
+                    const data = guilds.data
+                    return data[Math.floor(Math.random() * data.length)].id
+                })
+            } catch (error) {
+                errorCount++
+
+                this.ctx.logger.error(
+                    `Failed to connect onebot: ${bot.selfId}, wait ${(5000 + errorCount * 5000) / 1000}s`,
+                    error
+                )
+                sleep(5000 + errorCount * 5000)
+            }
+        }
+
+        if (errorCount >= 5) {
+            this.ctx.logger.error(`Failed to connect onebot: ${bot.selfId}`)
+            return []
+        }
 
         // call internal api to get voice list
 
@@ -75,23 +98,29 @@ export class QQVoiceAdapter extends VitsAdapter {
                 group_id: groupId
             })
             .then((res) => {
-                console.log(res)
                 return res.data as {
+                    type: string
                     characters: {
                         character_name: string
                         character_id: string
                     }[]
-                }
+                }[]
             })
             .then((res) => {
-                return res.characters.map((speaker) => {
-                    return {
-                        name: speaker.character_name,
-                        characterId: speaker.character_id
-                    } as QQVoiceSpeaker
+                return res.flatMap((raw) => {
+                    return raw.characters.map((character) => {
+                        return {
+                            name: character.character_name,
+                            characterId: character.character_id
+                        } as QQVoiceSpeaker
+                    })
                 })
             })
 
-        return speakers
+        return Array.from(
+            new Map(
+                speakers.map((speaker) => [speaker.characterId, speaker])
+            ).values()
+        )
     }
 }

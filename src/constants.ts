@@ -71,19 +71,19 @@ export class LunaVitsProvider extends DataService<string> {
             await fs.promises.readFile(this.resolveConfigPath(), 'utf-8')
         ) as VitsConfig[]
 
-        const filteredConfigs = configs.filter(
-            (c) => c.enabled === true || c.enabled == null
-        )
+        const filteredConfigs = configs
+            .filter((c) => c.enabled === true || c.enabled == null)
+            .map(async (config) => {
+                const speakerList = await (
+                    this.ctx.vits as LunaVitsService
+                ).getSpeakerList(config)
 
-        for (const config of filteredConfigs) {
-            const speakerList = await (
-                this.ctx.vits as LunaVitsService
-            ).getSpeakerList(config)
+                config.speakers = speakerList
 
-            config.speakers = speakerList
-        }
+                return config
+            })
 
-        return filteredConfigs
+        return await Promise.all(filteredConfigs)
     }
 
     resolveConfigDir() {
@@ -167,7 +167,7 @@ export class LunaVitsProvider extends DataService<string> {
         } else if (config.type === 'qq-voice') {
             speaker = speaker as QQVoiceSpeaker
 
-            result.push([config, `${speaker.name}_AUTO`, speaker])
+            result.push([config, `QQ_${speaker.name}_AUTO`, speaker])
         } else if (config.type === 'fish-audio') {
             speaker = speaker as FishAudioSpeaker
 
