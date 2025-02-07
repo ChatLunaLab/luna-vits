@@ -175,7 +175,6 @@ export async function generatePayload(
             style_text: 'Hello!!',
             style_weight: 0
         },
-
         baseConfig,
         additionalConfig,
         payload

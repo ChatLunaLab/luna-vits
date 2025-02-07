@@ -52,8 +52,8 @@ export class LunaVitsService extends Vits {
         }
 
         return runWithRetry(
-            async () => {
-                return this._adapters[currentConfig[0].type].predict(
+            async () =>
+                this._adapters[currentConfig[0].type].predict(
                     input,
                     currentConfig[0],
                     Object.assign(
@@ -65,8 +65,7 @@ export class LunaVitsService extends Vits {
                             speaker: currentConfig[1]
                         }
                     )
-                )
-            },
+                ),
             3,
             5000
         )
