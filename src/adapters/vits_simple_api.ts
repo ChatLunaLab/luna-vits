@@ -7,7 +7,7 @@ import { getAudioFileExtension, selectProperty } from '../utils'
 import { mappingLanguageToGPTSoVits } from './gpt_sovits2_api'
 
 export class VitsSimpleAPIAdapter extends VitsAdapter {
-    type = 'vits-simple-api'
+    type = 'vits-simple-api' as const
 
     async predict(
         input: string,

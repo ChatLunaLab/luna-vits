@@ -9,7 +9,7 @@ import * as gptSovits2Fixed1 from './processor/gpt_sovits_2_fixed1'
 import { getAudioFileExtension, TTLCache } from '../../utils'
 
 export class GradioAdapter extends VitsAdapter {
-    type = 'gradio'
+    type = 'gradio' as const
 
     private clients: TTLCache<Client>
     private processors: Record<string, GradioProcessor> = {}

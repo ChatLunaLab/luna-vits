@@ -1,9 +1,15 @@
 export interface VitsConfig<
-    T extends 'GPT-SoVITS2' | 'vits-simple-api' | 'gradio' | 'fish-audio' =
+    T extends
         | 'GPT-SoVITS2'
         | 'vits-simple-api'
         | 'gradio'
         | 'fish-audio'
+        | 'qq-voice' =
+        | 'GPT-SoVITS2'
+        | 'vits-simple-api'
+        | 'gradio'
+        | 'fish-audio'
+        | 'qq-voice'
 > {
     name?: string
     type: T
@@ -17,7 +23,9 @@ export interface VitsConfig<
               ? VitsSimpleApiConfig
               : T extends 'fish-audio'
                 ? FishAudioConfig
-                : GradioConfig
+                : T extends 'qq-voice'
+                  ? QQVoiceConfig
+                  : GradioConfig
         : GradioConfig
     speakers: (this extends { type: infer T }
         ? T extends 'GPT-SoVITS2'
@@ -26,7 +34,9 @@ export interface VitsConfig<
               ? VitsSimpleApiSpeaker
               : T extends 'fish-audio'
                 ? FishAudioSpeaker
-                : GradioSpeaker
+                : T extends 'qq-voice'
+                  ? QQVoiceSpeaker
+                  : GradioSpeaker
         : BaseSpeaker)[]
 }
 
@@ -90,6 +100,10 @@ export interface GradioSpeaker
     fn_index: string | number
 }
 
+export interface QQVoiceSpeaker extends BaseSpeaker {
+    characterId: string
+}
+
 export interface GPTSoVITS2Request {
     ref_audio_path: string
     aux_ref_audio_paths: string[]
@@ -118,6 +132,10 @@ export interface GradioConfig
     fn_index: string | number
     languages?: string[]
     auto_pull_speaker?: boolean
+}
+
+export interface QQVoiceConfig {
+    accountId: string
 }
 
 export interface FishAudioSpeaker

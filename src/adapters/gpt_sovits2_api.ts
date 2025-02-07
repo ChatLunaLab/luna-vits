@@ -10,7 +10,7 @@ import {
 import { removeProperty } from '../utils'
 
 export class GPTSoVITS2Adapter extends VitsAdapter {
-    type = 'GPT-SoVITS2'
+    type = 'GPT-SoVITS2' as const
 
     private _configWeights: Record<string, ConfigWeights> = {}
 
@@ -20,7 +20,7 @@ export class GPTSoVITS2Adapter extends VitsAdapter {
 
     async predict(
         input: string,
-        config: VitsConfig,
+        config: VitsConfig<'GPT-SoVITS2'>,
         options: VitsAdapter.Config
     ): Promise<h> {
         const speaker = options.speaker as GPTSoVITS2Speaker

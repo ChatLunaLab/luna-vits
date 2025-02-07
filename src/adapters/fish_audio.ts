@@ -9,8 +9,8 @@ import {
     FishAudioSpeaker
 } from '../type'
 
-export class FishAudioAdapter extends VitsAdapter {
-    type = 'fish-audio'
+export class FishAudioAdapter extends VitsAdapter<'fish-audio'> {
+    type = 'fish-audio' as const
 
     constructor(ctx: Context) {
         super(ctx)

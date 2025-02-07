@@ -132,3 +132,12 @@
 
     - name: "派蒙"
       reference_id: 'eacc56f8ab48443fa84421c547d3b60e'
+
+
+# QQ AI 声聊配置
+- name: 'QQ'
+  type: 'qq-voice'
+  enabled: false
+  config:
+    # 输入你的 QQ 账号
+    accountId: 10001

@@ -1,4 +1,5 @@
-import { Context, h } from 'koishi'
+/* eslint-disable @typescript-eslint/no-namespace */
+import { Context, h, Session } from 'koishi'
 import { Config } from './config'
 import Vits from '@initencounter/vits'
 import { VitsAdapter } from './adapters/base'
@@ -20,7 +21,11 @@ export class LunaVitsService extends Vits {
         this._adapters[adapter.type] = adapter
     }
 
-    async predict(input: string, options: VitsAdapter.Config): Promise<h> {
+    async predict(
+        input: string,
+        options: VitsAdapter.Config,
+        session?: Session
+    ): Promise<h> {
         if (input.length > this.config.maxLength) {
             return h.text('输入的字符串长度不能超过 ' + this.config.maxLength)
         }
@@ -64,7 +69,8 @@ export class LunaVitsService extends Vits {
                         {
                             speaker: currentConfig[1]
                         }
-                    )
+                    ),
+                    session
                 ),
             3,
             5000
@@ -97,11 +103,15 @@ export class LunaVitsService extends Vits {
         const speakerKeyIdMap =
             await this.ctx.console.services.luna_vits_data.getSpeakerKeyIdMap()
 
-        return this.predict(options.input, {
-            speaker:
-                speakerKeyIdMap[options.speaker_id]?.[1] ??
-                this.config.defaultSpeaker
-        })
+        return this.predict(
+            options.input,
+            {
+                speaker:
+                    speakerKeyIdMap[options.speaker_id]?.[1] ??
+                    this.config.defaultSpeaker
+            },
+            options['session']
+        )
     }
 
     getSpeakerList(config: VitsConfig) {
@@ -115,16 +125,6 @@ export class LunaVitsService extends Vits {
         gradio: {
             required: false
         }
-    }
-}
-
-async function importFranc() {
-    try {
-        return await import('franc-min')
-    } catch (e) {
-        throw new Error(
-            'Please install franc-min as a dependency with, e.g. `npm install -S franc-min`'
-        )
     }
 }
 
@@ -146,4 +146,14 @@ const francLanguageMapping: Record<string, string> = {
     vie: 'vi',
     cmn: 'zh',
     ell: 'el'
+}
+
+async function importFranc() {
+    try {
+        return await import('franc-min')
+    } catch (e) {
+        throw new Error(
+            'Please install franc-min as a dependency with, e.g. `npm install -S franc-min`'
+        )
+    }
 }

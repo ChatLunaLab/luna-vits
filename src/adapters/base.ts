@@ -1,18 +1,31 @@
-import { Context, h } from 'koishi'
+import { Context, h, Session } from 'koishi'
 import { BaseSpeaker, VitsConfig } from '../type'
 
-export abstract class VitsAdapter {
-    abstract type: string
+export abstract class VitsAdapter<
+    T extends
+        | 'GPT-SoVITS2'
+        | 'vits-simple-api'
+        | 'gradio'
+        | 'fish-audio'
+        | 'qq-voice' =
+        | 'GPT-SoVITS2'
+        | 'vits-simple-api'
+        | 'gradio'
+        | 'fish-audio'
+        | 'qq-voice'
+> {
+    abstract type: T
 
     constructor(public ctx: Context) {}
 
     abstract predict(
         input: string,
-        config: VitsConfig,
-        options: VitsAdapter.Config
+        config: VitsConfig<T>,
+        options: VitsAdapter.Config,
+        session?: Session
     ): Promise<h>
 
-    async getSpeakerList(config: VitsConfig) {
+    async getSpeakerList(config: VitsConfig<T>) {
         return config.speakers
     }
 }

@@ -44,6 +44,7 @@
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-n": "^16.6.2",
+    "koishi-plugin-adapter-onebot": "^6.8.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-promise": "^7.1.0",
     "franc-min": "^6.2.0",

@@ -4,6 +4,7 @@ import {
     FishAudioSpeaker,
     GradioConfig,
     GradioSpeaker,
+    QQVoiceSpeaker,
     Speaker,
     VitsConfig,
     VitsSimpleApiSpeaker
@@ -162,6 +163,10 @@ export class LunaVitsProvider extends DataService<string> {
                     ])
                 }
             }
+            result.push([config, `${speaker.name}_AUTO`, speaker])
+        } else if (config.type === 'qq-voice') {
+            speaker = speaker as QQVoiceSpeaker
+
             result.push([config, `${speaker.name}_AUTO`, speaker])
         } else if (config.type === 'fish-audio') {
             speaker = speaker as FishAudioSpeaker
