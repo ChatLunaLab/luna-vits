@@ -116,6 +116,13 @@ export class QQVoiceAdapter extends VitsAdapter {
                     })
                 })
             })
+            .catch((error) => {
+                this.ctx.logger.error(
+                    `Failed to get voice list from onebot: ${bot.selfId}`,
+                    error
+                )
+                return [] as QQVoiceSpeaker[]
+            })
 
         return Array.from(
             new Map(

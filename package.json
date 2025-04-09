@@ -33,30 +33,30 @@
     "semiver": "^1.1.0"
   },
   "devDependencies": {
-    "@koishijs/client": "^5.30.1",
+    "@koishijs/client": "^5.30.7",
     "@koishijs/translator": "^1.1.1",
     "@typescript-eslint/eslint-plugin": "^7.18.1-alpha.3",
-    "@typescript-eslint/parser": "^8.15.1-alpha.0",
-    "esbuild": "^0.23.1",
+    "@typescript-eslint/parser": "^8.29.1-alpha.3",
+    "esbuild": "^0.25.2",
     "esbuild-register": "npm:@shigma/esbuild-register@^1.1.1",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-n": "^16.6.2",
-    "koishi-plugin-adapter-onebot": "^6.8.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-promise": "^7.1.0",
+    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-plugin-promise": "^7.2.1",
     "franc-min": "^6.2.0",
-    "yakumo": "^1.0.0-beta.18",
-    "yakumo-esbuild": "^1.0.0-beta.7",
-    "yakumo-mocha": "^1.0.0-beta.2",
-    "yakumo-tsc": "^1.0.0-beta.5"
+    "koishi-plugin-adapter-onebot": "^6.8.0",
+    "yakumo": "^1.0.0",
+    "yakumo-esbuild": "^1.0.0",
+    "yakumo-mocha": "^1.0.0",
+    "yakumo-tsc": "^1.0.0"
   },
   "peerDependencies": {
-    "@koishijs/plugin-console": "^5.30.1",
+    "@koishijs/plugin-console": "^5.30.7",
     "franc-min": "^6.2.0",
-    "koishi": "^4.18.4",
+    "koishi": "^4.18.7",
     "koishi-plugin-gradio-service": "^0.0.10"
   },
   "peerDependenciesMeta": {
