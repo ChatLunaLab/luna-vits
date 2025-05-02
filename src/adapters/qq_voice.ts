@@ -51,25 +51,32 @@ export class QQVoiceAdapter extends VitsAdapter {
     }
 
     async getSpeakerList(config: VitsConfig<'qq-voice'>) {
-        const bot = this.ctx.bots.find((bot) => {
-            return (
-                bot.platform === 'onebot' &&
-                bot.selfId === config.config.accountId.toString()
-            )
-        }) as OneBotBot<Context>
-
-        QQVoiceAdapter._accounts.add(config.config.accountId)
-
-        if (!bot) {
-            return []
-        }
-
         // random group
 
         let groupId: string
         let errorCount = 0
 
+        let bot: OneBotBot<Context> | null = null
+
         while (!groupId && errorCount < 5) {
+            bot =
+                bot ??
+                (this.ctx.bots.find((bot) => {
+                    return (
+                        bot.platform === 'onebot' &&
+                        bot.selfId === config.config.accountId.toString()
+                    )
+                }) as OneBotBot<Context>)
+
+            if (!bot) {
+                this.ctx.logger.error(
+                    `Failed to connect onebot: ${bot.selfId}, wait ${(5000 + errorCount * 5000) / 1000}s`
+                )
+                sleep(5000 + errorCount * 5000)
+            }
+
+            QQVoiceAdapter._accounts.add(config.config.accountId)
+
             try {
                 groupId = await bot.getGuildList().then((guilds) => {
                     const data = guilds.data
@@ -91,43 +98,52 @@ export class QQVoiceAdapter extends VitsAdapter {
             return []
         }
 
+        errorCount = 0
         // call internal api to get voice list
 
-        const speakers = await bot.internal
-            ._request('get_ai_characters', {
-                group_id: groupId
-            })
-            .then((res) => {
-                return res.data as {
-                    type: string
-                    characters: {
-                        character_name: string
-                        character_id: string
-                    }[]
-                }[]
-            })
-            .then((res) => {
-                return res.flatMap((raw) => {
-                    return raw.characters.map((character) => {
-                        return {
-                            name: character.character_name,
-                            characterId: character.character_id
-                        } as QQVoiceSpeaker
+        while (errorCount < 5) {
+            try {
+                const speakers = await bot.internal
+                    ._request('get_ai_characters', {
+                        group_id: groupId
                     })
-                })
-            })
-            .catch((error) => {
+                    .then((res) => {
+                        return res.data as {
+                            type: string
+                            characters: {
+                                character_name: string
+                                character_id: string
+                            }[]
+                        }[]
+                    })
+                    .then((res) => {
+                        return res.flatMap((raw) => {
+                            return raw.characters.map((character) => {
+                                return {
+                                    name: character.character_name,
+                                    characterId: character.character_id
+                                } as QQVoiceSpeaker
+                            })
+                        })
+                    })
+
+                return Array.from(
+                    new Map(
+                        speakers.map((speaker) => [
+                            speaker.characterId,
+                            speaker
+                        ])
+                    ).values()
+                )
+            } catch (e) {
+                errorCount++
+
                 this.ctx.logger.error(
                     `Failed to get voice list from onebot: ${bot.selfId}`,
-                    error
+                    e
                 )
-                return [] as QQVoiceSpeaker[]
-            })
-
-        return Array.from(
-            new Map(
-                speakers.map((speaker) => [speaker.characterId, speaker])
-            ).values()
-        )
+                sleep(5000 + errorCount * 5000)
+            }
+        }
     }
 }
