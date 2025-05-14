@@ -2,11 +2,14 @@ import { VitsAdapter } from './base'
 import { Context, h, Session, sleep } from 'koishi'
 import type { OneBotBot } from 'koishi-plugin-adapter-onebot'
 import { QQVoiceSpeaker, VitsConfig } from '../type'
+import { PromiseLock } from '../utils'
 
 export class QQVoiceAdapter extends VitsAdapter {
     type = 'qq-voice' as const
 
     private static _accounts = new Set<string>()
+
+    private static _lock = new PromiseLock(false)
 
     constructor(ctx: Context) {
         super(ctx)
@@ -19,7 +22,7 @@ export class QQVoiceAdapter extends VitsAdapter {
         session: Session
     ): Promise<h> {
         if (session == null) {
-            return h.text('请提供 seession 对象。')
+            return h.text('请提供 session 对象。')
         }
         if (session.platform !== 'onebot' && session.onebot == null) {
             return h.text('AI 声聊仅支持 OneBot 协议。')
@@ -37,15 +40,20 @@ export class QQVoiceAdapter extends VitsAdapter {
 
         const bot = session.onebot!
 
-        await bot
-            ._request('send_group_ai_record', {
-                group_id: session.guildId!,
-                character: speaker.characterId,
-                text: input
-            })
-            .then((res) => {
-                return res.data as string
-            })
+        await QQVoiceAdapter._lock.runLocked(async () => {
+            await bot
+                ._request('send_group_ai_record', {
+                    group_id: session.guildId!,
+                    character: speaker.characterId,
+                    text: input
+                })
+                .then((res) => {
+                    return res.data as string
+                })
+
+            // wait for 100ms
+            await sleep(100)
+        })
 
         return h.text('')
     }
