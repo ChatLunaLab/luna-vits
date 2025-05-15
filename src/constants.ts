@@ -45,6 +45,8 @@ export class LunaVitsProvider extends DataService<string> {
         )
 
         this.watchConfig()
+
+        await super.refresh(true)
     }
 
     stop(): Awaitable<void> {

@@ -52,7 +52,7 @@ export class QQVoiceAdapter extends VitsAdapter {
                 })
 
             // wait for 100ms
-            await sleep(100)
+            await sleep(400)
         })
 
         return h.text('')

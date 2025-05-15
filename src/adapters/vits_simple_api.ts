@@ -33,7 +33,7 @@ export class VitsSimpleAPIAdapter extends VitsAdapter {
                 // load file to blob
                 const filePath = value as string
                 const file = fs.readFileSync(filePath)
-                const blob = new Blob([file], {
+                const blob = new Blob([new Uint8Array(file)], {
                     type: getAudioFileExtension(path.extname(filePath))
                 })
                 formData.append(key, blob, path.basename(filePath))
